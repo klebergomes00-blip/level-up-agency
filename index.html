@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LEVELUP — Especialista em Criação de Sites &amp; Perfil da Empresa no Google</title>
+    <meta
+      name="description"
+      content="Especialista em Perfil da Empresa no Google e Criação de Sites de Alta Conversão. Mais visitas, mais ligações e mais faturamento para o seu negócio."
+    />
+    <meta name="theme-color" content="#050a1c" />
+
+    <!-- Open Graph Metadata -->
+    <meta property="og:title" content="LEVELUP — Criação de Sites &amp; Perfil da Empresa no Google" />
+    <meta
+      property="og:description"
+      content="Sites que impressionam. Presença no Google que gera oportunidades reais de faturamento."
+    />
+    <meta property="og:type" content="website" />
+
+    <!-- CDN & Local Fallback Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/176e894661aa9cdc_3.4.17" onerror="void(0)"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="assets/28033e449a31ebcc_gsap.min.js" onerror="void(0)"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="assets/ad33c2df9ada8a66_ScrollTrigger.min.js" onerror="void(0)"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="assets/f5e19dbcfdbaa3f1_lucide.min.js" onerror="void(0)"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="assets/758d94838db0cafd_iconify-icon.min.js" onerror="void(0)"></script>
+
+    <!-- Google Fonts: Playfair Display + Inter + JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ══════════════════════════════════════════════════════════════ */
+      /* DESIGN SYSTEM CONSTANTS & CSS VARIABLES                        */
+      /* ══════════════════════════════════════════════════════════════ */
+      :root {
+        --color-bg-primary: #050a1c;
+        --color-bg-card: #0a1128;
+        --color-bg-elevated: #0f1738;
+        --color-accent-orange: #fdba74;
+        --color-accent-orange-bright: #fb923c;
+        --color-accent-cyan: #67e8f9;
+        --color-accent-teal: #5eead4;
+        --color-accent-emerald: #34d399;
+        --color-text-white: #ffffff;
+        --color-text-slate: #94a3b8;
+        --font-serif: 'Playfair Display', Georgia, serif;
+        --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+        --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: geometricPrecision;
+      }
+
+      html,
+      body {
+        background-color: var(--color-bg-primary);
+        color: #e2e8f0;
+        font-family: var(--font-sans);
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+      }
+
+      .serif {
+        font-family: var(--font-serif);
+      }
+
+      .mono {
+        font-family: var(--font-mono);
+      }
+
+      /* Custom Scrollbars */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #050a1c;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(253, 186, 116, 0.25);
+        border-radius: 9999px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(253, 186, 116, 0.55);
+      }
+
+      /* ══════════ TYPOGRAPHY & SHIMMER ENGINE ══════════ */
+      .stroke-text-white {
+        -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.88);
+        color: transparent;
+      }
+
+      .text-gradient-shimmer {
+        background: linear-gradient(135deg, #ffffff 0%, #fff7ed 25%, #fdba74 65%, #67e8f9 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-size: 200% auto;
+        animation: textShimmer 8s linear infinite;
+      }
+
+      .text-ghost-hover {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.65);
+        color: transparent;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .text-ghost-hover:hover {
+        -webkit-text-stroke: 1px transparent;
+        color: #ffffff;
+        text-shadow: 0 0 35px rgba(255, 255, 255, 0.7), 0 0 70px rgba(253, 186, 116, 0.45);
+      }
+
+      @keyframes textShimmer {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      /* ══════════ FLASH-CARD CONIC GLOW ENGINE ══════════ */
+      .flash-card {
+        position: relative;
+        --cursor-angle: 0deg;
+        --proximity: 0;
+      }
+      .flash-card::before,
+      .flash-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: conic-gradient(
+          from var(--cursor-angle, 0deg),
+          rgba(253, 186, 116, 0.95),
+          transparent 55deg,
+          transparent 305deg,
+          rgba(253, 186, 116, 0.95)
+        );
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: exclude;
+        opacity: var(--proximity, 0);
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+        z-index: 20;
+      }
+      .flash-card::after {
+        filter: blur(14px);
+        opacity: calc(var(--proximity, 0) * 0.75);
+        z-index: 19;
+      }
+
+      /* Glassmorphism Specs */
+      .glass-panel {
+        background: rgba(10, 17, 40, 0.72);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .glass-panel-subtle {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.065);
+      }
+
+      /* Line Clip Overflow for Reveal */
+      .reveal-overflow {
+        overflow: hidden;
+        display: block;
+      }
+
+      /* Custom Magnetic Cursor */
+      #custom-cursor {
+        position: fixed;
+        width: 38px;
+        height: 38px;
+        border: 1px solid rgba(253, 186, 116, 0.5);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                    height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                    background-color 0.3s ease,
+                    border-color 0.3s ease;
+      }
+      #custom-cursor-dot {
+        position: fixed;
+        width: 5px;
+        height: 5px;
+        background-color: #fdba74;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 10000;
+        transform: translate(-50%, -50%);
+      }
+      .cursor-hover {
+        width: 65px !important;
+        height: 65px !important;
+        background-color: rgba(253, 186, 116, 0.14) !important;
+        border-color: rgba(253, 186, 116, 0.85) !important;
+        backdrop-filter: blur(4px);
+      }
+
+      /* Headline Scale */
+      .hero-display-headline {
+        font-size: clamp(3.2rem, 5.8vw, 6.8rem);
+        line-height: 1.02;
+        letter-spacing: -0.025em;
+      }
+
+      /* Accessibility Reduced Motion */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+        #custom-cursor,
+        #custom-cursor-dot {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="selection:bg-orange-400/30 selection:text-orange-100 antialiased">
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- CUSTOM MAGNETIC CURSOR (Desktop Only)                         -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div id="custom-cursor" class="hidden lg:block"></div>
+    <div id="custom-cursor-dot" class="hidden lg:block"></div>
+
+
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- FIXED PLANETARY BACKGROUND BACKDROP (facedaterra.png)          -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div id="bg-earth-backdrop" class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+      <img
+        src="facedaterra.png"
+        alt=""
+        class="w-full h-full object-cover opacity-40 mix-blend-screen filter brightness-105 contrast-110 will-change-transform"
+        onerror="this.src='assets/facedaterra.png'"
+      />
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- FIXED PARALLAX BACKGROUND LAYERS & STARLIGHT                   -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+      <!-- Ambient Fluid Mesh Blobs -->
+      <div id="bg-layer-1" class="absolute -inset-40 opacity-60">
+        <div class="absolute top-[3%] left-[8%] w-[45rem] h-[45rem] rounded-full bg-blue-700/20 blur-[130px]"></div>
+        <div class="absolute top-[35%] right-[5%] w-[38rem] h-[38rem] rounded-full bg-indigo-600/18 blur-[110px]"></div>
+        <div class="absolute top-[65%] left-[15%] w-[40rem] h-[40rem] rounded-full bg-cyan-600/12 blur-[130px]"></div>
+        <div class="absolute bottom-[5%] right-[20%] w-[35rem] h-[35rem] rounded-full bg-orange-500/10 blur-[140px]"></div>
+      </div>
+
+      <!-- Ambient Starlight Constellations -->
+      <div id="bg-layer-2" class="absolute -inset-20 opacity-80">
+        <div class="absolute top-[12%] right-[22%] w-1.5 h-1.5 rounded-full bg-white/70 shadow-[0_0_8px_#fff]"></div>
+        <div class="absolute top-[28%] left-[12%] w-1 h-1 rounded-full bg-white/50"></div>
+        <div class="absolute top-[45%] right-[8%] w-2 h-2 rounded-full bg-orange-300/60 shadow-[0_0_12px_#fdba74]"></div>
+        <div class="absolute top-[62%] left-[25%] w-1 h-1 rounded-full bg-white/60"></div>
+        <div class="absolute top-[78%] right-[32%] w-1.5 h-1.5 rounded-full bg-cyan-300/60 shadow-[0_0_10px_#67e8f9]"></div>
+        <div class="absolute top-[90%] left-[45%] w-1 h-1 rounded-full bg-white/40"></div>
+      </div>
+
+      <!-- Dot-Matrix Grid Overlay -->
+      <div
+        id="bg-layer-3"
+        class="absolute inset-0 opacity-[0.035]"
+        style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 48px 48px;"
+      ></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- TOP HORIZONTAL NAVIGATION (Refined Editorial Topbar)           -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <header
+      id="main-header"
+      class="fixed top-0 inset-x-0 z-50 backdrop-blur-[18px] bg-[#040a1c]/75 border-b border-white/10 transition-all duration-300 h-20"
+    >
+      <nav class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between gap-6" aria-label="Navegação Principal">
+        
+        <!-- ESQUERDA: Logo Level Up (110px-125px com micro-glow sutil no hover) -->
+        <div class="flex items-center">
+          <a
+            href="#hero"
+            class="group flex items-center transition-all duration-300"
+            aria-label="LEVELUP Agency Início"
+          >
+            <img
+              src="levelup-logo-3d-transparent.png"
+              alt="LevelUp Agency"
+              class="w-[115px] sm:w-[125px] h-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_0_15px_rgba(0,160,255,0.45)]"
+              style="filter: drop-shadow(0 2px 10px rgba(0, 160, 255, 0.28));"
+              onerror="this.src='assets/levelup-logo-3d-transparent.png'"
+            />
+          </a>
+        </div>
+
+        <!-- CENTRO: Editorial Navigation Links (Limpo sem numeração) -->
+        <div class="hidden md:flex items-center gap-8 lg:gap-11 text-xs tracking-[0.22em] font-medium text-slate-300">
+          <a href="#servicos" class="nav-item relative py-1 hover:text-white transition-colors duration-300">
+            SERVIÇOS
+          </a>
+          <a href="#google" class="nav-item relative py-1 hover:text-white transition-colors duration-300">
+            GOOGLE
+          </a>
+          <a href="#sites" class="nav-item relative py-1 hover:text-white transition-colors duration-300">
+            SITES
+          </a>
+          <a href="#resultados" class="nav-item relative py-1 hover:text-white transition-colors duration-300">
+            RESULTADOS
+          </a>
+        </div>
+
+        <!-- DIREITA: Botão VAMOS CONVERSAR ↗ -->
+        <div class="flex items-center gap-4">
+          <!-- Botão Premium: VAMOS CONVERSAR ↗ -->
+          <a
+            href="#contato"
+            class="btn-magnetic group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-md border border-orange-400/40 bg-orange-400/[0.05] text-orange-200 text-xs tracking-[0.22em] font-medium overflow-hidden hover:border-orange-300 hover:bg-orange-400/15 transition-all duration-300 shadow-[0_0_20px_rgba(253,186,116,0.18)]"
+          >
+            <span class="absolute inset-0 bg-gradient-to-r from-orange-300/20 to-amber-200/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+            <span class="relative z-10 group-hover:text-white transition-colors">VAMOS CONVERSAR</span>
+            <span class="relative z-10 font-mono text-xs text-orange-300 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform">↗</span>
+          </a>
+
+          <!-- Mobile Menu Trigger -->
+          <button
+            id="mobile-toggle"
+            class="md:hidden text-slate-300 hover:text-white p-2 rounded-lg border border-white/10 bg-white/[0.03]"
+            aria-label="Abrir Menu de Navegação"
+          >
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Mobile Dropdown Navigation -->
+      <div
+        id="mobile-drawer"
+        class="hidden md:hidden px-6 py-6 border-t border-white/10 bg-[#050a1c]/98 backdrop-blur-2xl flex flex-col gap-4 text-xs tracking-[0.22em] text-slate-300"
+      >
+        <a href="#servicos" class="py-2 hover:text-white flex items-center justify-between">
+          <span>SERVIÇOS</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+        </a>
+        <a href="#google" class="py-2 hover:text-white flex items-center justify-between">
+          <span>GOOGLE</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+        </a>
+        <a href="#sites" class="py-2 hover:text-white flex items-center justify-between">
+          <span>SITES</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+        </a>
+        <a href="#resultados" class="py-2 hover:text-white flex items-center justify-between">
+          <span>RESULTADOS</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+        </a>
+        <a href="#contato" class="py-3 text-orange-300 font-semibold flex items-center gap-2 border-t border-white/10 mt-2">
+          <span>VAMOS CONVERSAR ↗</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- MASTER SHOWSTOPPER HERO (PROTAGONIST 3D LOGO & HEADLINE)       -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <main class="relative z-10">
+      <section id="hero" class="relative min-h-screen flex flex-col items-center justify-center pt-28 pb-16 px-4 sm:px-6 overflow-hidden">
+        
+        <!-- Background WebGL Shader (1.200 Multi-Speed Particles Attracted to Mouse) -->
+        <canvas
+          id="hero-gl"
+          class="absolute inset-0 w-full h-full pointer-events-none z-0"
+        ></canvas>
+
+        <!-- Ambient Planetary Background Image (Grand & Deep Cosmic Depth) -->
+        <div
+          id="bg-logo-backdrop"
+          class="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden select-none"
+          aria-hidden="true"
+        >
+          <img
+            src="facedaterra.png"
+            alt=""
+            class="w-full h-full object-cover opacity-35 md:opacity-40 mix-blend-screen filter brightness-105 contrast-110 drop-shadow-[0_0_90px_rgba(0,160,255,0.4)] transition-transform duration-700 will-change-transform"
+            onerror="this.src='assets/facedaterra.png'"
+          />
+        </div>
+
+
+
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <!-- PROTAGONIST CENTRAL 3D LOGO, EDITORIAL HEADLINE & MASTER CTA   -->
+        <!-- ══════════════════════════════════════════════════════════════ -->
+        <div class="text-center px-4 max-w-4xl mx-auto z-10 relative flex flex-col items-center justify-center my-auto">
+          
+          <!-- 1. Central 3D Logo Protagonist with Fine Orbital Rings & Volumetric Core Glow -->
+          <div id="hero-logo-center" class="hero-logo-el relative flex items-center justify-center mb-6 z-10 select-none">
+            <!-- Volumetric Deep Radial Glows -->
+            <div class="absolute w-72 h-72 rounded-full bg-cyan-500/15 blur-3xl pointer-events-none -z-10"></div>
+            <div class="absolute w-56 h-56 rounded-full bg-blue-600/20 blur-2xl pointer-events-none -z-10"></div>
+            <div class="absolute w-40 h-40 rounded-full bg-amber-400/10 blur-xl pointer-events-none -z-10"></div>
+
+            <!-- Orbital Fine Ring 1 (Clockwise) -->
+            <div class="absolute w-44 h-44 sm:w-52 sm:h-52 rounded-full border border-cyan-400/20 pointer-events-none animate-[spin_26s_linear_infinite]">
+              <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_8px_#67e8f9]"></div>
+            </div>
+
+            <!-- Orbital Fine Ring 2 (Counter-Clockwise) -->
+            <div class="absolute w-56 h-56 sm:w-64 sm:h-64 rounded-full border border-orange-300/15 pointer-events-none animate-[spin_34s_linear_infinite_reverse]">
+              <div class="absolute -bottom-1 left-1/3 w-1.5 h-1.5 rounded-full bg-amber-300 shadow-[0_0_8px_#fdba74]"></div>
+            </div>
+
+            <!-- Protagonist 3D Logo Element -->
+            <div class="relative group cursor-pointer">
+              <img
+                src="levelup-logo-3d-transparent.png"
+                alt="LevelUp 3D Logo"
+                class="w-28 sm:w-36 md:w-40 h-auto object-contain filter drop-shadow-[0_0_35px_rgba(0,160,255,0.45)] drop-shadow-[0_0_70px_rgba(52,211,153,0.3)] transition-transform duration-700 group-hover:scale-105"
+                onerror="this.src='assets/levelup-logo-3d-transparent.png'"
+              />
+            </div>
+          </div>
+
+          <!-- 2. Discreet Editorial Label with Gradient Lines -->
+          <div class="hero-anim-el flex items-center justify-center gap-3.5 mb-5">
+            <span class="w-10 h-px bg-gradient-to-r from-transparent to-orange-400/40"></span>
+            <span class="text-[11px] font-mono tracking-[0.4em] text-orange-300/90 uppercase font-medium">
+              PRESENÇA DIGITAL · GOOGLE &amp; WEB
+            </span>
+            <span class="w-10 h-px bg-gradient-to-l from-transparent to-orange-400/40"></span>
+          </div>
+
+          <!-- 3. New Master Display Heading (SEO H1) with Line Clip Reveal -->
+          <h1 class="hero-display-headline serif font-medium tracking-tight text-white mb-5 select-none text-center">
+            <span class="reveal-overflow">
+              <span class="hero-line block text-white font-medium">SEU NEGÓCIO</span>
+            </span>
+            <span class="reveal-overflow">
+              <span class="hero-line block text-white font-normal">MERECE SER VISTO.</span>
+            </span>
+            <span class="reveal-overflow">
+              <span class="hero-line block text-gradient-shimmer serif italic font-semibold pt-1">
+                E ENCONTRADO.
+              </span>
+            </span>
+          </h1>
+
+          <!-- 4. Subheadline (Clean, Elegant & Focused) -->
+          <p class="hero-anim-el text-sm sm:text-base md:text-lg text-slate-300/90 font-light tracking-wide max-w-xl mx-auto leading-relaxed mb-7">
+            Sites e presença no Google para colocar sua empresa diante das pessoas certas.
+          </p>
+
+          <!-- 5. Master Primary CTA Button -->
+          <div class="hero-anim-el flex flex-col sm:flex-row items-center justify-center gap-4 mb-7">
+            <a
+              href="#contato"
+              id="hero-magnetic-btn"
+              class="btn-magnetic group relative inline-flex items-center gap-3.5 px-8 sm:px-11 py-4 sm:py-4.5 rounded-md border border-orange-300/50 bg-[#0a1128]/85 text-xs tracking-[0.25em] text-orange-100 font-semibold overflow-hidden transition-all duration-300 hover:text-[#050a1c] shadow-[0_0_35px_rgba(253,186,116,0.25)] backdrop-blur-md"
+            >
+              <!-- Sliding Gradient Background Fill -->
+              <span class="absolute inset-0 bg-gradient-to-r from-orange-300 via-amber-200 to-orange-400 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+              <span class="relative z-10 hidden sm:inline">TRANSFORMAR VISIBILIDADE EM RESULTADOS</span>
+              <span class="relative z-10 sm:hidden">QUERO CRESCER</span>
+              <span class="relative z-10 font-mono text-sm group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform duration-300">↗</span>
+            </a>
+          </div>
+
+          <!-- 6. Authority & Trust Capsule Badge (Subtle & Elegant) -->
+          <div class="hero-anim-el flex justify-center mb-6">
+            <div class="flash-card glass-panel-subtle px-4 py-2 rounded-full border border-white/10 max-w-lg mx-auto flex items-center gap-2.5 text-[11px] font-mono text-slate-300 shadow-[0_4px_20px_rgba(0,0,0,0.25)]">
+              <span class="text-amber-300 flex items-center text-xs tracking-tighter">★★★★★</span>
+              <span class="font-semibold text-white font-sans">5.0 no Google</span>
+              <span class="w-1 h-1 rounded-full bg-slate-500"></span>
+              <span class="text-emerald-300">Especialistas em Perfil &amp; Web</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll Down Cue (Fades on Scroll) -->
+        <div id="scroll-prompt" class="hero-anim-el absolute bottom-3 flex flex-col items-center gap-1 text-slate-500 z-10 pointer-events-none transition-opacity duration-500">
+          <span class="text-[9px] tracking-[0.35em] uppercase font-mono">SCROLL PARA EXPLORAR</span>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-orange-300/80 animate-bounce"></i>
+        </div>
+      </section>
+    </main>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- JAVASCRIPT: WEBGL SHADER + SCROLL VIDEO + GSAP PHYSICS         -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <script>
+      /* ══════════ 1. CONFIGURATION OBJECT ══════════ */
+      const CONFIG = {
+        agencyName: "LEVELUP",
+        tagline: "Especialista em Criação de Sites e Perfil da Empresa no Google",
+        location: "Goiânia · Brasil",
+        whatsappUrl: "https://wa.me/5562999999999",
+        contactUrl: "#contato"
+      };
+
+      /* ══════════ 2. INITIALIZE LUCIDE ICONS ══════════ */
+      if (window.lucide) {
+        lucide.createIcons({
+          attrs: { 'stroke-width': 1.5 }
+        });
+      }
+
+      /* ══════════ 3. MOBILE MENU TOGGLE ══════════ */
+      const mobileToggle = document.getElementById('mobile-toggle');
+      const mobileDrawer = document.getElementById('mobile-drawer');
+      if (mobileToggle && mobileDrawer) {
+        mobileToggle.addEventListener('click', () => {
+          mobileDrawer.classList.toggle('hidden');
+        });
+      }
+
+      /* ══════════ 4. CUSTOM MAGNETIC CURSOR (DESKTOP) ══════════ */
+      const cursor = document.getElementById('custom-cursor');
+      const cursorDot = document.getElementById('custom-cursor-dot');
+      if (cursor && cursorDot && window.innerWidth >= 1024) {
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let curX = mouseX;
+        let curY = mouseY;
+
+        window.addEventListener('mousemove', (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+          cursorDot.style.left = mouseX + 'px';
+          cursorDot.style.top = mouseY + 'px';
+        });
+
+        function renderCursor() {
+          curX += (mouseX - curX) * 0.2;
+          curY += (mouseY - curY) * 0.2;
+          cursor.style.left = curX + 'px';
+          cursor.style.top = curY + 'px';
+          requestAnimationFrame(renderCursor);
+        }
+        renderCursor();
+
+        const hoverTargets = document.querySelectorAll('a, button, input, .flash-card');
+        hoverTargets.forEach((target) => {
+          target.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+          target.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+        });
+      }
+
+      /* ══════════ 5. REAL-TIME CONIC FLASHLIGHT GLOW ENGINE ══════════ */
+      (function initConicFlashlight() {
+        const cards = document.querySelectorAll('.flash-card, .glass-panel');
+        window.addEventListener('pointermove', function (e) {
+          cards.forEach(function (card) {
+            const r = card.getBoundingClientRect();
+            const dx = e.clientX - (r.left + r.width / 2);
+            const dy = e.clientY - (r.top + r.height / 2);
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+            const dist = Math.hypot(dx, dy);
+            const edge = Math.hypot(r.width / 2, r.height / 2);
+            const proximity = Math.max(0, 1 - Math.abs(dist - edge) / 240);
+            card.style.setProperty('--cursor-angle', angle.toFixed(1) + 'deg');
+            card.style.setProperty('--proximity', proximity.toFixed(3));
+          });
+        });
+      })();
+
+      /* ══════════ 6. GSAP STAGGERED ENTRANCE & MAGNETIC BUTTONS ══════════ */
+      if (window.gsap) {
+        // Entrance Timeline
+        const entranceTl = gsap.timeline({
+          defaults: { ease: 'power3.out' },
+          delay: 0.1
+        });
+
+        // 1. Header Dropdown
+        entranceTl.fromTo(
+          '#main-header',
+          { y: -30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1.0 }
+        );
+
+        // 2. Central 3D Logo Reveal with Scale & Glow
+        entranceTl.fromTo(
+          '.hero-logo-el',
+          { scale: 0.85, opacity: 0, y: 20, filter: 'blur(8px)' },
+          { scale: 1, opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.3, ease: 'power3.out' },
+          '-=0.6'
+        );
+
+        // 3. Background 3D Logo Reveal with Scale & Glow
+        entranceTl.fromTo(
+          '#bg-logo-backdrop img',
+          { scale: 0.95, opacity: 0, filter: 'blur(10px)' },
+          { scale: 1.05, opacity: 0.18, filter: 'blur(1.2px)', duration: 1.6, ease: 'power3.out' },
+          '-=0.8'
+        );
+
+        // 4. Headline Line-by-Line Clip Reveal (translateY 110% -> 0)
+        entranceTl.fromTo(
+          '.hero-line',
+          { yPercent: 110, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 1.1, stagger: 0.12 },
+          '-=0.8'
+        );
+
+        // 5. Secondary Elements & CTA Stagger
+        entranceTl.fromTo(
+          '.hero-anim-el',
+          { y: 25, opacity: 0, filter: 'blur(6px)' },
+          { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.9, stagger: 0.1 },
+          '-=0.6'
+        );
+
+        // Magnetic CTA Buttons
+        const magBtns = document.querySelectorAll('.btn-magnetic, #hero-magnetic-btn');
+        magBtns.forEach((mag) => {
+          mag.addEventListener('mousemove', (e) => {
+            const rect = mag.getBoundingClientRect();
+            const x = (e.clientX - rect.left - rect.width / 2) * 0.35;
+            const y = (e.clientY - rect.top - rect.height / 2) * 0.45;
+            gsap.to(mag, {
+              x: x, y: y,
+              duration: 0.35,
+              ease: 'power2.out'
+            });
+          });
+          mag.addEventListener('mouseleave', () => {
+            gsap.to(mag, { x: 0, y: 0, duration: 0.65, ease: 'elastic.out(1, 0.4)' });
+          });
+        });
+
+        /* ══════════ 7. BACKGROUND LOGO MOUSE PARALLAX DEPTH ══════════ */
+        const bgLogoImg = document.querySelector('#bg-logo-backdrop img');
+        const heroLogoCenter = document.getElementById('hero-logo-center');
+        
+        window.addEventListener('mousemove', function (e) {
+          const px = e.clientX / window.innerWidth - 0.5;
+          const py = e.clientY / window.innerHeight - 0.5;
+          
+          if (bgLogoImg) {
+            gsap.to(bgLogoImg, {
+              x: px * 35,
+              y: py * 25,
+              duration: 1.2,
+              ease: 'power2.out',
+              overwrite: 'auto'
+            });
+          }
+
+          if (heroLogoCenter) {
+            gsap.to(heroLogoCenter, {
+              x: px * 18,
+              y: py * 14,
+              duration: 0.9,
+              ease: 'power2.out',
+              overwrite: 'auto'
+            });
+          }
+        });
+
+        /* ══════════ 8. BACKGROUND PARALLAX & SCROLL DEPTH ══════════ */
+        if (window.ScrollTrigger) {
+          gsap.registerPlugin(ScrollTrigger);
+
+          gsap.to('#bg-earth-backdrop img', {
+            scrollTrigger: {
+              trigger: '#hero',
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 0.6
+            },
+            y: 50,
+            scale: 1.08,
+            opacity: 0.25,
+            ease: 'none'
+          });
+
+          gsap.to('#bg-logo-backdrop img', {
+            scrollTrigger: {
+              trigger: '#hero',
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 0.6
+            },
+            y: 40,
+            scale: 1.18,
+            opacity: 0.05,
+            ease: 'none'
+          });
+
+          ScrollTrigger.create({
+            trigger: '#hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.3,
+            onUpdate: (self) => {
+              const prompt = document.getElementById('scroll-prompt');
+              if (prompt) {
+                prompt.style.opacity = Math.max(0, 1 - self.progress * 4);
+              }
+            }
+          });
+        }
+      }
+
+      /* ══════════════════════════════════════════════════════════════ */
+      /* 9. REAL-TIME WEBGL SHADER: MULTI-SPEED PARTICLES (DEPTH)       */
+      /* ══════════════════════════════════════════════════════════════ */
+      (function initWebGLShader() {
+        const canvas = document.getElementById('hero-gl');
+        if (!canvas) return;
+        const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+        if (!gl) return;
+
+        function resize() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = canvas.clientWidth * dpr;
+          canvas.height = canvas.clientHeight * dpr;
+          gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        function sh(t, s) {
+          const o = gl.createShader(t);
+          gl.shaderSource(o, s);
+          gl.compileShader(o);
+          return o;
+        }
+
+        function prog(v, f) {
+          const p = gl.createProgram();
+          gl.attachShader(p, sh(gl.VERTEX_SHADER, v));
+          gl.attachShader(p, sh(gl.FRAGMENT_SHADER, f));
+          gl.linkProgram(p);
+          return p;
+        }
+
+        /* Mesh Gradient Fluid Background Shader */
+        const gp = prog(
+          'attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }',
+          'precision mediump float; uniform vec2 r; uniform float t;' +
+            'void main(){' +
+            'vec2 uv = gl_FragCoord.xy / r;' +
+            'vec2 c1 = vec2(.28 + .14 * sin(t * .31), .62 + .12 * cos(t * .42));' +
+            'vec2 c2 = vec2(.74 + .12 * cos(t * .24), .34 + .14 * sin(t * .37));' +
+            'vec2 c3 = vec2(.5 + .2 * sin(t * .19 + 2.), .5 + .18 * sin(t * .28 + 1.));' +
+            'float d1 = exp(-3.2 * length(uv - c1));' +
+            'float d2 = exp(-3.2 * length(uv - c2));' +
+            'float d3 = exp(-3.8 * length(uv - c3));' +
+            'vec3 col = vec3(.13, .25, .78) * d1 + vec3(.04, .5, .6) * d2 + vec3(.98, .55, .25) * d3 * .5;' +
+            'float a = clamp((d1 + d2 + d3) * .5, 0., .75);' +
+            'gl_FragColor = vec4(col, a);' +
+            '}'
+        );
+
+        /* Particle Attractor Point Shader */
+        const pp = prog(
+          'attribute vec2 a; attribute float s; varying float vs; void main(){ vs = s; gl_Position = vec4(a, 0., 1.); gl_PointSize = s; }',
+          'precision mediump float; varying float vs;' +
+            'void main(){' +
+            'vec2 d = gl_PointCoord - vec2(.5);' +
+            'float m = smoothstep(.5, .08, length(d));' +
+            'vec3 c = mix(vec3(.55, .7, 1.), vec3(1., .78, .45), step(3.2, vs));' +
+            'gl_FragColor = vec4(c * m, m * .9);' +
+            '}'
+        );
+
+        const qb = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, qb);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+
+        let mx = 0, my = 0;
+        window.addEventListener('mousemove', function (e) {
+          const b = canvas.getBoundingClientRect();
+          mx = ((e.clientX - b.left) / b.width) * 2 - 1;
+          my = -(((e.clientY - b.top) / b.height) * 2 - 1);
+        });
+
+        const N = 1200;
+        const pos = new Float32Array(N * 2);
+        const vel = new Float32Array(N * 2);
+        const speedWeight = new Float32Array(N);
+        const siz = new Float32Array(N);
+
+        function spawn(i) {
+          pos[2 * i] = Math.random() * 2 - 1;
+          pos[2 * i + 1] = Math.random() * 2 - 1;
+          vel[2 * i] = 0;
+          vel[2 * i + 1] = 0;
+          speedWeight[i] = 0.3 + Math.random() * 0.8;
+          siz[i] = 1.2 + Math.random() * 2.4;
+        }
+
+        for (let i = 0; i < N; i++) spawn(i);
+
+        const pb = gl.createBuffer();
+        const sb = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, sb);
+        gl.bufferData(gl.ARRAY_BUFFER, siz, gl.STATIC_DRAW);
+
+        const t0 = performance.now();
+        function frame(now) {
+          const t = (now - t0) / 1000, dt = 0.016;
+          gl.clearColor(0, 0, 0, 0);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+          gl.enable(gl.BLEND);
+          gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+          // Render Fluid Mesh Gradient
+          gl.useProgram(gp);
+          gl.bindBuffer(gl.ARRAY_BUFFER, qb);
+          const lp = gl.getAttribLocation(gp, 'p');
+          gl.enableVertexAttribArray(lp);
+          gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
+          gl.uniform2f(gl.getUniformLocation(gp, 'r'), canvas.width, canvas.height);
+          gl.uniform1f(gl.getUniformLocation(gp, 't'), t);
+          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+          // Update & Render Multi-Speed Particles (Smooth Celestial Drift)
+          for (let i = 0; i < N; i++) {
+            const sw = speedWeight[i];
+            const dx = mx - pos[2 * i];
+            const dy = my - pos[2 * i + 1];
+            const d = Math.sqrt(dx * dx + dy * dy) + 1e-4;
+            const f = (0.28 * sw) / (d + 0.12);
+            vel[2 * i] += ((dx / d) * f - (dy / d) * f * 0.25) * dt;
+            vel[2 * i + 1] += ((dy / d) * f + (dx / d) * f * 0.25) * dt;
+            vel[2 * i] *= 0.985;
+            vel[2 * i + 1] *= 0.985;
+            pos[2 * i] += vel[2 * i] * dt;
+            pos[2 * i + 1] += vel[2 * i + 1] * dt;
+            if (d < 0.04) spawn(i);
+          }
+
+          gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+          gl.useProgram(pp);
+          gl.bindBuffer(gl.ARRAY_BUFFER, pb);
+          gl.bufferData(gl.ARRAY_BUFFER, pos, gl.DYNAMIC_DRAW);
+          const la = gl.getAttribLocation(pp, 'a');
+          gl.enableVertexAttribArray(la);
+          gl.vertexAttribPointer(la, 2, gl.FLOAT, false, 0, 0);
+          gl.bindBuffer(gl.ARRAY_BUFFER, sb);
+          const ls = gl.getAttribLocation(pp, 's');
+          gl.enableVertexAttribArray(ls);
+          gl.vertexAttribPointer(ls, 1, gl.FLOAT, false, 0, 0);
+          gl.drawArrays(gl.POINTS, 0, N);
+
+          requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      })();
+    </script>
+  </body>
+</html>

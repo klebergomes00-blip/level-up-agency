@@ -3771,7 +3771,7 @@
       /* ══════════════════════════════════════════════════════════════ */
       /* 10. REAL-TIME WEBGL SHADER: MULTI-SPEED PARTICLES (DEPTH)      */
       /* ══════════════════════════════════════════════════════════════ */
-      /* ══════════ 8. HIGH-PERFORMANCE VIBRANT COSMIC STARDUST SHADER ══════════ */
+      /* ══════════ 8. HIGH-PERFORMANCE REFINED MICRO-STARDUST SHADER ══════════ */
         (function initWebGLShader() {
           const canvas = document.getElementById('hero-gl');
           if (!canvas) return;
@@ -3779,20 +3779,20 @@
             alpha: true,
             premultipliedAlpha: false,
             antialias: false,
-            powerPreference: 'high-performance'
+            powerPreference: 'low-power'
           });
           if (!gl) return;
 
           let resizeTimeout = null;
           function resize() {
-            const dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+            const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
             canvas.width = canvas.clientWidth * dpr;
             canvas.height = canvas.clientHeight * dpr;
             gl.viewport(0, 0, canvas.width, canvas.height);
           }
           window.addEventListener('resize', () => {
             if (resizeTimeout) clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(resize, 120);
+            resizeTimeout = setTimeout(resize, 150);
           }, { passive: true });
           resize();
 
@@ -3811,16 +3811,16 @@
             return p;
           }
 
-          /* Glowing Radial Particle Shader */
+          /* Subtle Pinpoint Star Point Shader */
           const pp = prog(
             'attribute vec2 a; attribute float s; varying float vs; void main(){ vs = s; gl_Position = vec4(a, 0., 1.); gl_PointSize = s; }',
             'precision mediump float; varying float vs;' +
               'void main(){' +
               'vec2 d = gl_PointCoord - vec2(.5);' +
               'float dist = length(d);' +
-              'float m = smoothstep(.5, .05, dist);' +
-              'vec3 c = mix(vec3(.45, .82, 1.), vec3(1., .88, .55), step(2.6, vs));' +
-              'gl_FragColor = vec4(c * m, m * .92);' +
+              'float m = smoothstep(.5, .15, dist);' +
+              'vec3 c = mix(vec3(.55, .82, 1.), vec3(1., .92, .72), step(1.8, vs));' +
+              'gl_FragColor = vec4(c * (m * .55), m * .55);' +
               '}'
           );
 
@@ -3840,8 +3840,8 @@
             }, { passive: true });
           }
 
-          // Balanced particle count: 1200 on mobile, 2500 on desktop
-          const N = window.innerWidth < 768 ? 1200 : 2500;
+          // Subtle, elegant micro-particle count (uncluttered, non-intrusive)
+          const N = window.innerWidth < 768 ? 180 : 380;
           const pos = new Float32Array(N * 2);
           const vel = new Float32Array(N * 2);
           const speedWeight = new Float32Array(N);
@@ -3850,10 +3850,11 @@
           function spawn(i) {
             pos[2 * i] = Math.random() * 2.2 - 1.1;
             pos[2 * i + 1] = Math.random() * 2.2 - 1.1;
-            vel[2 * i] = (Math.random() - 0.5) * 0.012;
-            vel[2 * i + 1] = (Math.random() - 0.5) * 0.012;
+            vel[2 * i] = (Math.random() - 0.5) * 0.004;
+            vel[2 * i + 1] = (Math.random() - 0.5) * 0.004;
             speedWeight[i] = 0.35 + Math.random() * 0.75;
-            siz[i] = (window.innerWidth < 768 ? 1.8 : 2.2) + Math.random() * 3.2;
+            // Fine pinpoint size: 1.0px to 2.2px
+            siz[i] = 1.0 + Math.random() * 1.4;
           }
 
           for (let i = 0; i < N; i++) spawn(i);
@@ -3882,36 +3883,30 @@
               const sw = speedWeight[i];
 
               if (hasMovedMouse) {
-                // Interactive gentle cursor field
                 const dx = mx - pos[2 * i];
                 const dy = my - pos[2 * i + 1];
                 const d = Math.sqrt(dx * dx + dy * dy) + 1e-4;
-                const clearanceRadius = 0.22;
+                const clearanceRadius = 0.25;
 
                 if (d < clearanceRadius) {
-                  const repel = ((clearanceRadius - d) / clearanceRadius) * 0.55 * sw;
-                  vel[2 * i] -= (dx / d) * repel * dt * 4.0;
-                  vel[2 * i + 1] -= (dy / d) * repel * dt * 4.0;
-                } else if (d < 0.8) {
-                  const f = (0.25 * sw) / (d + 0.2);
-                  const spin = 0.65;
-                  vel[2 * i] += ((dx / d) * f - (dy / d) * f * spin) * dt * 0.8;
-                  vel[2 * i + 1] += ((dy / d) * f + (dx / d) * f * spin) * dt * 0.8;
+                  const repel = ((clearanceRadius - d) / clearanceRadius) * 0.35 * sw;
+                  vel[2 * i] -= (dx / d) * repel * dt * 3.0;
+                  vel[2 * i + 1] -= (dy / d) * repel * dt * 3.0;
                 }
               }
 
-              // Natural cosmic wave current drifting across the screen
-              vel[2 * i] += Math.sin(t * 0.9 + pos[2 * i + 1] * 2.2) * 0.00035 * sw;
-              vel[2 * i + 1] += (Math.cos(t * 0.8 + pos[2 * i] * 2.0) * 0.0003 + 0.00015) * sw; // gentle upward current
+              // Calm, subtle celestial drift across the background
+              vel[2 * i] += Math.sin(t * 0.6 + pos[2 * i + 1] * 1.8) * 0.00015 * sw;
+              vel[2 * i + 1] += (Math.cos(t * 0.5 + pos[2 * i] * 1.6) * 0.00015 + 0.00008) * sw;
 
-              // Fluid damping
-              vel[2 * i] *= 0.985;
-              vel[2 * i + 1] *= 0.985;
+              // Gentle damping
+              vel[2 * i] *= 0.99;
+              vel[2 * i + 1] *= 0.99;
 
               pos[2 * i] += vel[2 * i];
               pos[2 * i + 1] += vel[2 * i + 1];
 
-              // Screen wrap
+              // Screen boundary wrap
               if (pos[2 * i] < -1.15) pos[2 * i] = 1.15;
               if (pos[2 * i] > 1.15) pos[2 * i] = -1.15;
               if (pos[2 * i + 1] < -1.15) pos[2 * i + 1] = 1.15;

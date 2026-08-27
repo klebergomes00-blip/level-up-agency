@@ -106,6 +106,7 @@
         color: #e2e8f0;
         font-family: var(--font-sans);
         overflow-x: hidden;
+        max-width: 100vw;
         width: 100%;
         position: relative;
       }
@@ -262,9 +263,11 @@
 
       /* Headline Scale */
       .hero-display-headline {
-        font-size: clamp(3.2rem, 5.8vw, 6.8rem);
-        line-height: 1.02;
+        font-size: clamp(2rem, 6.8vw, 6.8rem);
+        line-height: 1.06;
         letter-spacing: -0.025em;
+        word-break: break-word;
+        overflow-wrap: break-word;
       }
 
       /* Accessibility Reduced Motion */
@@ -408,11 +411,11 @@
     <!-- ══════════════════════════════════════════════════════════════ -->
     <header
       id="main-header"
-      class="fixed top-0 inset-x-0 z-50 backdrop-blur-[18px] bg-[#040a1c]/75 border-b border-white/10 transition-all duration-300 h-20"
+      class="fixed top-0 inset-x-0 z-50 backdrop-blur-[18px] bg-[#040a1c]/75 border-b border-white/10 transition-all duration-300 h-16 sm:h-20"
     >
-      <nav class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between gap-6" aria-label="Navegação Principal">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between gap-4 sm:gap-6" aria-label="Navegação Principal">
         
-        <!-- ESQUERDA: Logo Level Up (110px-125px com micro-glow sutil no hover) -->
+        <!-- ESQUERDA: Logo Level Up (100px-125px com micro-glow sutil no hover) -->
         <div class="flex items-center">
           <a
             href="#hero"
@@ -422,7 +425,7 @@
             <img
               src="assets/images/logo-3d-transparent.png"
               alt="LevelUp Agency"
-              class="w-[115px] sm:w-[125px] h-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_0_15px_rgba(0,160,255,0.45)]"
+              class="w-[100px] sm:w-[125px] h-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_0_15px_rgba(0,160,255,0.45)]"
               style="filter: drop-shadow(0 2px 10px rgba(0, 160, 255, 0.28));"
               onerror="this.src='assets/images/logo-3d-transparent.png'"
             />
@@ -431,7 +434,7 @@
 
         <!-- CENTRO: Editorial Navigation Links (Limpo sem numeração) -->
         <div class="hidden md:flex items-center gap-8 lg:gap-11 text-xs tracking-[0.22em] font-medium text-slate-300">
-          <a href="#servicos" class="nav-item relative py-1 hover:text-white transition-colors duration-300">
+          <a href="#como-funciona" class="nav-item relative py-1 hover:text-white transition-colors duration-300">
             SERVIÇOS
           </a>
           <a href="#google" class="nav-item relative py-1 hover:text-white transition-colors duration-300">
@@ -440,19 +443,19 @@
           <a href="#sites" class="nav-item relative py-1 hover:text-white transition-colors duration-300">
             SITES
           </a>
-          <a href="#resultados" class="nav-item relative py-1 hover:text-white transition-colors duration-300">
+          <a href="#trabalhos" class="nav-item relative py-1 hover:text-white transition-colors duration-300">
             RESULTADOS
           </a>
         </div>
 
-        <!-- DIREITA: Botão VAMOS CONVERSAR ↗ -->
-        <div class="flex items-center gap-4">
-          <!-- Botão Premium: VAMOS CONVERSAR ↗ -->
+        <!-- DIREITA: Botão VAMOS CONVERSAR ↗ + Mobile Menu Trigger -->
+        <div class="flex items-center gap-3 sm:gap-4">
+          <!-- Botão Premium: VAMOS CONVERSAR ↗ (Visível a partir de telas sm) -->
           <a
             href="https://wa.me/5561996229988"
             target="_blank"
             rel="noopener noreferrer"
-            class="btn-magnetic group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-md border border-orange-400/40 bg-orange-400/[0.05] text-orange-200 text-xs tracking-[0.22em] font-medium overflow-hidden hover:border-orange-300 hover:bg-orange-400/15 transition-all duration-300 shadow-[0_0_20px_rgba(253,186,116,0.18)]"
+            class="hidden sm:inline-flex btn-magnetic group relative items-center gap-2 px-5 py-2.5 rounded-md border border-orange-400/40 bg-orange-400/[0.05] text-orange-200 text-xs tracking-[0.22em] font-medium overflow-hidden hover:border-orange-300 hover:bg-orange-400/15 transition-all duration-300 shadow-[0_0_20px_rgba(253,186,116,0.18)]"
           >
             <span class="absolute inset-0 bg-gradient-to-r from-orange-300/20 to-amber-200/10 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
             <span class="relative z-10 group-hover:text-white transition-colors">VAMOS CONVERSAR</span>
@@ -462,7 +465,7 @@
           <!-- Mobile Menu Trigger -->
           <button
             id="mobile-toggle"
-            class="md:hidden text-slate-300 hover:text-white p-2 rounded-lg border border-white/10 bg-white/[0.03]"
+            class="md:hidden text-slate-300 hover:text-white p-2.5 rounded-lg border border-white/10 bg-white/[0.03] active:scale-95 transition-all"
             aria-label="Abrir Menu de Navegação"
           >
             <i data-lucide="menu" class="w-5 h-5"></i>
@@ -473,31 +476,36 @@
       <!-- Mobile Dropdown Navigation -->
       <div
         id="mobile-drawer"
-        class="hidden md:hidden px-6 py-6 border-t border-white/10 bg-[#050a1c]/98 backdrop-blur-2xl flex flex-col gap-4 text-xs tracking-[0.22em] text-slate-300"
+        class="hidden md:hidden px-5 py-6 border-t border-white/10 bg-[#050a1c]/98 backdrop-blur-2xl flex flex-col gap-3 text-xs tracking-[0.22em] text-slate-300 shadow-2xl transition-all duration-300"
       >
-        <a href="#servicos" class="py-2 hover:text-white flex items-center justify-between">
+        <a href="#como-funciona" class="py-2.5 px-3 rounded-lg hover:bg-white/[0.04] hover:text-white flex items-center justify-between transition-colors">
           <span>SERVIÇOS</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
         </a>
-        <a href="#google" class="py-2 hover:text-white flex items-center justify-between">
+        <a href="#google" class="py-2.5 px-3 rounded-lg hover:bg-white/[0.04] hover:text-white flex items-center justify-between transition-colors">
           <span>GOOGLE</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
         </a>
-        <a href="#sites" class="py-2 hover:text-white flex items-center justify-between">
+        <a href="#sites" class="py-2.5 px-3 rounded-lg hover:bg-white/[0.04] hover:text-white flex items-center justify-between transition-colors">
           <span>SITES</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
         </a>
-        <a href="#resultados" class="py-2 hover:text-white flex items-center justify-between">
+        <a href="#trabalhos" class="py-2.5 px-3 rounded-lg hover:bg-white/[0.04] hover:text-white flex items-center justify-between transition-colors">
           <span>RESULTADOS</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+        </a>
+        <a href="#contato" class="py-2.5 px-3 rounded-lg hover:bg-white/[0.04] hover:text-white flex items-center justify-between transition-colors">
+          <span>CONTATO</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
         </a>
         <a
           href="https://wa.me/5561996229988"
           target="_blank"
           rel="noopener noreferrer"
-          class="py-3 text-orange-300 font-semibold flex items-center gap-2 border-t border-white/10 mt-2"
+          class="py-3.5 px-4 text-orange-200 bg-orange-400/10 border border-orange-400/30 rounded-xl font-semibold flex items-center justify-center gap-2 border-t border-white/10 mt-2 shadow-[0_0_20px_rgba(253,186,116,0.15)]"
         >
-          <span>VAMOS CONVERSAR ↗</span>
+          <span>VAMOS CONVERSAR</span>
+          <span class="font-mono text-sm">↗</span>
         </a>
       </div>
     </header>
@@ -506,7 +514,7 @@
     <!-- MASTER SHOWSTOPPER HERO (PROTAGONIST 3D LOGO & HEADLINE)       -->
     <!-- ══════════════════════════════════════════════════════════════ -->
     <main class="relative z-10">
-      <section id="hero" class="relative min-h-screen flex flex-col items-center justify-center pt-28 pb-16 px-4 sm:px-6 overflow-hidden">
+      <section id="hero" class="relative min-h-[100svh] flex flex-col items-center justify-center pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 overflow-hidden">
         
         <!-- Subtle Atmospheric Hero Ambient Backdrop (Enhances Contrast Without Obstructing Earth) -->
         <div class="absolute inset-0 pointer-events-none z-[1] overflow-hidden select-none" aria-hidden="true">
@@ -530,23 +538,23 @@
         <!-- ══════════════════════════════════════════════════════════════ -->
         <!-- PROTAGONIST CENTRAL 3D LOGO, EDITORIAL HEADLINE & MASTER CTA   -->
         <!-- ══════════════════════════════════════════════════════════════ -->
-        <div class="text-center px-4 max-w-4xl mx-auto z-10 relative flex flex-col items-center justify-center my-auto">
+        <div class="text-center px-2 sm:px-4 max-w-4xl mx-auto z-10 relative flex flex-col items-center justify-center my-auto w-full">
           
           <!-- 1. Central 3D Logo Protagonist with Fine Orbital Rings & Volumetric Core Glow -->
-          <div id="hero-logo-center" class="hero-logo-el relative flex items-center justify-center mb-6 z-10 select-none">
+          <div id="hero-logo-center" class="hero-logo-el relative flex items-center justify-center mb-5 sm:mb-6 z-10 select-none">
             <!-- Volumetric Deep Radial Glows -->
-            <div class="absolute w-72 h-72 rounded-full bg-cyan-500/15 blur-3xl pointer-events-none -z-10"></div>
-            <div class="absolute w-56 h-56 rounded-full bg-blue-600/20 blur-2xl pointer-events-none -z-10"></div>
-            <div class="absolute w-40 h-40 rounded-full bg-amber-400/10 blur-xl pointer-events-none -z-10"></div>
+            <div class="absolute w-56 sm:w-72 h-56 sm:h-72 rounded-full bg-cyan-500/15 blur-3xl pointer-events-none -z-10"></div>
+            <div class="absolute w-44 sm:w-56 h-44 sm:h-56 rounded-full bg-blue-600/20 blur-2xl pointer-events-none -z-10"></div>
+            <div class="absolute w-32 sm:w-40 h-32 sm:h-40 rounded-full bg-amber-400/10 blur-xl pointer-events-none -z-10"></div>
 
             <!-- Orbital Fine Ring 1 (Clockwise) -->
-            <div class="absolute w-44 h-44 sm:w-52 sm:h-52 rounded-full border border-cyan-400/20 pointer-events-none animate-[spin_26s_linear_infinite]">
-              <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_8px_#67e8f9]"></div>
+            <div class="absolute w-36 h-36 sm:w-48 sm:h-48 md:w-52 md:h-52 rounded-full border border-cyan-400/20 pointer-events-none animate-[spin_26s_linear_infinite]">
+              <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-cyan-300 shadow-[0_0_8px_#67e8f9]"></div>
             </div>
 
             <!-- Orbital Fine Ring 2 (Counter-Clockwise) -->
-            <div class="absolute w-56 h-56 sm:w-64 sm:h-64 rounded-full border border-orange-300/15 pointer-events-none animate-[spin_34s_linear_infinite_reverse]">
-              <div class="absolute -bottom-1 left-1/3 w-1.5 h-1.5 rounded-full bg-amber-300 shadow-[0_0_8px_#fdba74]"></div>
+            <div class="absolute w-44 h-44 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full border border-orange-300/15 pointer-events-none animate-[spin_34s_linear_infinite_reverse]">
+              <div class="absolute -bottom-1 left-1/3 w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-amber-300 shadow-[0_0_8px_#fdba74]"></div>
             </div>
 
             <!-- Protagonist 3D Logo Element -->
@@ -554,23 +562,23 @@
               <img
                 src="assets/images/logo-3d-transparent.png"
                 alt="LevelUp 3D Logo"
-                class="w-28 sm:w-36 md:w-40 h-auto object-contain filter drop-shadow-[0_0_35px_rgba(0,160,255,0.45)] drop-shadow-[0_0_70px_rgba(52,211,153,0.3)] transition-transform duration-700 group-hover:scale-105"
+                class="w-24 sm:w-36 md:w-40 h-auto object-contain filter drop-shadow-[0_0_35px_rgba(0,160,255,0.45)] drop-shadow-[0_0_70px_rgba(52,211,153,0.3)] transition-transform duration-700 group-hover:scale-105"
                 onerror="this.src='assets/images/logo-3d-transparent.png'"
               />
             </div>
           </div>
 
           <!-- 2. Discreet Editorial Label with Gradient Lines -->
-          <div class="hero-anim-el flex items-center justify-center gap-3.5 mb-5">
-            <span class="w-10 h-px bg-gradient-to-r from-transparent to-orange-400/40"></span>
-            <span class="text-[11px] font-mono tracking-[0.4em] text-orange-300/90 uppercase font-medium">
+          <div class="hero-anim-el flex items-center justify-center gap-2 sm:gap-3.5 mb-4 sm:mb-5 max-w-full px-2">
+            <span class="w-6 sm:w-10 h-px bg-gradient-to-r from-transparent to-orange-400/40"></span>
+            <span class="text-[9px] sm:text-[11px] font-mono tracking-[0.22em] sm:tracking-[0.4em] text-orange-300/90 uppercase font-medium text-center">
               PRESENÇA DIGITAL · GOOGLE &amp; WEB
             </span>
-            <span class="w-10 h-px bg-gradient-to-l from-transparent to-orange-400/40"></span>
+            <span class="w-6 sm:w-10 h-px bg-gradient-to-l from-transparent to-orange-400/40"></span>
           </div>
 
           <!-- 3. New Master Display Heading (SEO H1) with Line Clip Reveal -->
-          <h1 class="hero-display-headline serif font-medium tracking-tight text-white mb-5 select-none text-center">
+          <h1 class="hero-display-headline serif font-medium tracking-tight text-white mb-4 sm:mb-5 select-none text-center px-1">
             <span class="reveal-overflow">
               <span class="hero-line block text-white font-medium">SEU NEGÓCIO</span>
             </span>
@@ -585,18 +593,18 @@
           </h1>
 
           <!-- 4. Subheadline (Clean, Elegant & Focused) -->
-          <p class="hero-anim-el text-sm sm:text-base md:text-lg text-slate-300/90 font-light tracking-wide max-w-xl mx-auto leading-relaxed mb-7">
+          <p class="hero-anim-el text-xs sm:text-base md:text-lg text-slate-300/90 font-light tracking-wide max-w-xl mx-auto leading-relaxed mb-6 sm:mb-7 px-2">
             Sites, Landing Pages e presença no Google para colocar sua empresa diante das pessoas certas.
           </p>
 
           <!-- 5. Master Primary CTA Button -->
-          <div class="hero-anim-el flex flex-col sm:flex-row items-center justify-center gap-4 mb-7">
+          <div class="hero-anim-el flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 sm:mb-7 w-full px-2">
             <a
               href="https://wa.me/5561996229988"
               target="_blank"
               rel="noopener noreferrer"
               id="hero-magnetic-btn"
-              class="btn-magnetic group relative inline-flex items-center gap-3.5 px-8 sm:px-11 py-4 sm:py-4.5 rounded-md border border-orange-300/50 bg-[#0a1128]/85 text-xs tracking-[0.25em] text-orange-100 font-semibold overflow-hidden transition-all duration-300 hover:text-[#050a1c] shadow-[0_0_35px_rgba(253,186,116,0.25)] backdrop-blur-md"
+              class="btn-magnetic group relative inline-flex items-center justify-center gap-3 px-6 sm:px-11 py-3.5 sm:py-4.5 rounded-md border border-orange-300/50 bg-[#0a1128]/85 text-xs tracking-[0.2em] sm:tracking-[0.25em] text-orange-100 font-semibold overflow-hidden transition-all duration-300 hover:text-[#050a1c] shadow-[0_0_35px_rgba(253,186,116,0.25)] backdrop-blur-md w-full sm:w-auto text-center"
             >
               <!-- Sliding Gradient Background Fill -->
               <span class="absolute inset-0 bg-gradient-to-r from-orange-300 via-amber-200 to-orange-400 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
@@ -607,12 +615,14 @@
           </div>
 
           <!-- 6. Authority & Trust Capsule Badge (Subtle & Elegant) -->
-          <div class="hero-anim-el flex justify-center mb-6">
-            <div class="flash-card glass-panel-subtle px-4 py-2 rounded-full border border-white/10 max-w-lg mx-auto flex items-center gap-2.5 text-[11px] font-mono text-slate-300 shadow-[0_4px_20px_rgba(0,0,0,0.25)]">
-              <span class="text-amber-300 flex items-center text-xs tracking-tighter">★★★★★</span>
-              <span class="font-semibold text-white font-sans">5.0 no Google</span>
-              <span class="w-1 h-1 rounded-full bg-slate-500"></span>
-              <span class="text-emerald-300">Especialistas em Google Business Profile &amp; Web</span>
+          <div class="hero-anim-el flex justify-center mb-6 px-2 w-full">
+            <div class="flash-card glass-panel-subtle px-3.5 py-2 sm:px-4 sm:py-2 rounded-2xl sm:rounded-full border border-white/10 max-w-lg mx-auto flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 text-[10px] sm:text-[11px] font-mono text-slate-300 shadow-[0_4px_20px_rgba(0,0,0,0.25)] text-center">
+              <div class="flex items-center gap-1.5">
+                <span class="text-amber-300 text-xs tracking-tighter">★★★★★</span>
+                <span class="font-semibold text-white font-sans">5.0 no Google</span>
+              </div>
+              <span class="hidden sm:inline w-1 h-1 rounded-full bg-slate-500"></span>
+              <span class="text-emerald-300">Especialistas em Google &amp; Web</span>
             </div>
           </div>
         </div>
@@ -629,7 +639,7 @@
       <!-- ══════════════════════════════════════════════════════════════ -->
       <section
         id="como-funciona"
-        class="relative min-h-screen flex flex-col justify-center py-24 sm:py-32 lg:py-36 px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-[#030714]"
+        class="relative min-h-screen flex flex-col justify-center py-16 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-[#030714]"
       >
         <!-- Background Video for Section 02 (seunda dobra.mp4) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
@@ -658,7 +668,7 @@
         <div class="max-w-7xl mx-auto w-full relative z-10">
           
           <!-- Top Section Label / Editorial Micro-Telemetry -->
-          <div class="s2-anim-el flex items-center justify-between gap-6 mb-12 sm:mb-16 border-b border-white/[0.08] pb-6">
+          <div class="s2-anim-el flex flex-wrap items-center justify-between gap-4 mb-10 sm:mb-16 border-b border-white/[0.08] pb-4 sm:pb-6">
             <div class="flex items-center gap-3.5">
               <span class="w-2 h-2 rounded-full bg-orange-400 shadow-[0_0_8px_#fdba74]"></span>
               <span class="text-xs font-mono tracking-[0.35em] text-orange-300 uppercase font-semibold">
@@ -681,7 +691,7 @@
             <div class="lg:col-span-6 flex flex-col justify-between h-full space-y-8">
               <div>
                 <!-- Display Editorial Heading (SEO H2) -->
-                <h2 class="serif font-medium tracking-tight text-white text-4xl sm:text-5xl lg:text-6xl xl:text-[4.2rem] leading-[1.05] mb-8 select-none">
+                <h2 class="serif font-medium tracking-tight text-white text-3xl sm:text-5xl lg:text-6xl xl:text-[4.2rem] leading-[1.05] mb-6 sm:mb-8 select-none">
                   <span class="reveal-overflow">
                     <span class="s2-line block text-white">ENQUANTO VOCÊ</span>
                   </span>
@@ -797,15 +807,15 @@
               </div>
 
               <!-- CONNECTED DIGITAL ECOSYSTEM GRAPHIC (Visual UI Composite) -->
-              <div class="s2-anim-el flash-card glass-panel-subtle p-5 rounded-2xl border border-white/10 flex items-center justify-between gap-4 text-xs font-mono text-slate-300">
-                <div class="flex items-center gap-3">
+              <div class="s2-anim-el flash-card glass-panel-subtle p-4 sm:p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-300">
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
                   <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#67e8f9] animate-pulse"></span>
-                  <span class="text-slate-400">ECOSSISTEMA INTEGRADO:</span>
-                  <span class="text-white font-semibold">GOOGLE MAPS</span>
+                  <span class="text-slate-400 text-[11px] sm:text-xs">ECOSSISTEMA:</span>
+                  <span class="text-white font-semibold text-[11px] sm:text-xs">GOOGLE MAPS</span>
                   <span class="text-slate-500">⇄</span>
-                  <span class="text-white font-semibold">SITE PREMIUM</span>
+                  <span class="text-white font-semibold text-[11px] sm:text-xs">SITE PREMIUM</span>
                 </div>
-                <span class="hidden sm:inline-block text-orange-300 tracking-wider">CRESCIMENTO 360° ↗</span>
+                <span class="text-orange-300 tracking-wider text-[10px] sm:text-xs">CRESCIMENTO 360° ↗</span>
               </div>
 
             </div>
@@ -820,7 +830,7 @@
       <!-- ══════════════════════════════════════════════════════════════ -->
       <section
         id="google"
-        class="relative min-h-screen flex flex-col justify-center py-24 sm:py-32 lg:py-36 px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-[#030714]"
+        class="relative min-h-screen flex flex-col justify-center py-16 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-[#030714]"
       >
         <!-- Background Video for Section 03 (dobra3.mp4) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
@@ -849,7 +859,7 @@
         <div class="max-w-7xl mx-auto w-full relative z-10">
           
           <!-- Top Section Label / Editorial Micro-Telemetry -->
-          <div class="s3-anim-el flex items-center justify-between gap-6 mb-12 sm:mb-16 border-b border-white/[0.08] pb-6">
+          <div class="s3-anim-el flex flex-wrap items-center justify-between gap-4 mb-10 sm:mb-16 border-b border-white/[0.08] pb-4 sm:pb-6">
             <div class="flex items-center gap-3.5">
               <span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#67e8f9]"></span>
               <span class="text-xs font-mono tracking-[0.35em] text-cyan-300 uppercase font-semibold">
@@ -872,7 +882,7 @@
             <div class="lg:col-span-5 flex flex-col justify-center space-y-8">
               <div>
                 <!-- Display Editorial Heading (SEO H2) -->
-                <h2 class="serif font-medium tracking-tight text-white text-4xl sm:text-5xl lg:text-6xl xl:text-[3.9rem] leading-[1.06] mb-8 select-none">
+                <h2 class="serif font-medium tracking-tight text-white text-3xl sm:text-5xl lg:text-6xl xl:text-[3.9rem] leading-[1.06] mb-6 sm:mb-8 select-none">
                   <span class="reveal-overflow">
                     <span class="s3-line block text-white">QUANDO ALGUÉM</span>
                   </span>
@@ -896,12 +906,12 @@
               </div>
 
               <!-- Master Section 03 CTA -->
-              <div class="s3-anim-el flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2">
+              <div class="s3-anim-el flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2 w-full sm:w-auto">
                 <a
                   href="https://wa.me/5561996229988"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn-magnetic group relative inline-flex items-center gap-3 px-8 py-4 rounded-md border border-orange-300/50 bg-[#0a1128]/90 text-xs tracking-[0.25em] text-orange-100 font-semibold overflow-hidden transition-all duration-300 hover:text-[#050a1c] shadow-[0_0_30px_rgba(253,186,116,0.2)] backdrop-blur-md"
+                  class="btn-magnetic group relative inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-md border border-orange-300/50 bg-[#0a1128]/90 text-xs tracking-[0.2em] sm:tracking-[0.25em] text-orange-100 font-semibold overflow-hidden transition-all duration-300 hover:text-[#050a1c] shadow-[0_0_30px_rgba(253,186,116,0.2)] backdrop-blur-md w-full sm:w-auto text-center"
                 >
                   <span class="absolute inset-0 bg-gradient-to-r from-orange-300 via-amber-200 to-orange-400 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
                   <span class="relative z-10">QUERO SER ENCONTRADO</span>
@@ -1003,17 +1013,17 @@
                 <!-- CAMADA 2 (HTML): SEARCH INDICATOR & TELEMETRY BADGES       -->
                 <!-- ══════════════════════════════════════════════════════════ -->
                 <!-- Top Metric Holographic Pills -->
-                <div class="s3-layer-telemetry relative z-20 flex items-center justify-between w-full pointer-events-none gap-3">
+                <div class="s3-layer-telemetry relative z-20 flex flex-wrap items-center justify-between w-full pointer-events-none gap-2 sm:gap-3">
                   <!-- Pill Left: #1 NA BUSCA LOCAL -->
-                  <div class="s3-metric-badge flash-card glass-panel-subtle px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-cyan-400/25 bg-[#071333]/75 backdrop-blur-md flex items-center gap-2 text-[10px] sm:text-[11px] font-mono text-cyan-300 shadow-[0_4px_20px_rgba(0,180,255,0.15)] pointer-events-auto">
+                  <div class="s3-metric-badge flash-card glass-panel-subtle px-2.5 py-1 sm:px-4 sm:py-2 rounded-xl border border-cyan-400/25 bg-[#071333]/85 backdrop-blur-md flex items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[11px] font-mono text-cyan-300 shadow-[0_4px_20px_rgba(0,180,255,0.15)] pointer-events-auto">
                     <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#67e8f9] animate-pulse"></span>
                     <span class="font-semibold tracking-wider">#1 NA BUSCA LOCAL</span>
                   </div>
 
                   <!-- Pill Right: +340% DESCOBERTAS NO MAPS -->
-                  <div class="s3-metric-badge flash-card glass-panel-subtle px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-emerald-400/25 bg-[#071a2e]/75 backdrop-blur-md flex items-center gap-2 text-[10px] sm:text-[11px] font-mono text-emerald-300 shadow-[0_4px_20px_rgba(52,211,153,0.15)] pointer-events-auto">
+                  <div class="s3-metric-badge flash-card glass-panel-subtle px-2.5 py-1 sm:px-4 sm:py-2 rounded-xl border border-emerald-400/25 bg-[#071a2e]/85 backdrop-blur-md flex items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[11px] font-mono text-emerald-300 shadow-[0_4px_20px_rgba(52,211,153,0.15)] pointer-events-auto">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399] animate-pulse"></span>
-                    <span class="font-semibold tracking-wider">+340% DESCOBERTAS NO MAPS</span>
+                    <span class="font-semibold tracking-wider">+340% DESCOBERTAS</span>
                   </div>
                 </div>
 
@@ -1056,7 +1066,7 @@
                 <!-- Sleek Glassmorphic Result Card (Compact & Perfectly Scaled) -->
                 <div
                   id="google-profile-card"
-                  class="s3-profile-card flash-card glass-panel relative sm:absolute sm:bottom-5 sm:right-5 sm:max-w-[400px] w-full p-4 sm:p-5 rounded-2xl border border-white/15 bg-[#06102a]/85 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.55)] transition-all duration-300 hover:border-cyan-400/40 z-30 pointer-events-auto mt-auto"
+                  class="s3-profile-card flash-card glass-panel relative sm:absolute sm:bottom-5 sm:right-5 sm:max-w-[400px] w-full p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-white/15 bg-[#06102a]/90 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.55)] transition-all duration-300 hover:border-cyan-400/40 z-30 pointer-events-auto mt-auto"
                 >
                   <!-- Card Header: Verified Status & Star Rating -->
                   <div class="flex items-center justify-between gap-3 mb-2.5 pb-2 border-b border-white/[0.07]">
@@ -1135,7 +1145,7 @@
       <!-- ══════════════════════════════════════════════════════════════ -->
       <section
         id="sites"
-        class="relative min-h-screen flex flex-col justify-center py-24 sm:py-32 lg:py-36 px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-gradient-to-b from-[#050a1c] via-[#070e28] to-[#050a1c]"
+        class="relative min-h-screen flex flex-col justify-center py-16 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-gradient-to-b from-[#050a1c] via-[#070e28] to-[#050a1c]"
       >
         <!-- Ambient Digital Gallery Glow Accents -->
         <div class="absolute top-1/4 -left-48 w-[45rem] h-[45rem] rounded-full bg-orange-500/[0.07] blur-[160px] pointer-events-none -z-10" aria-hidden="true"></div>
@@ -1146,7 +1156,7 @@
         <div class="max-w-7xl mx-auto w-full">
           
           <!-- Top Section Label / Editorial Micro-Telemetry -->
-          <div class="s4-anim-el flex items-center justify-between gap-6 mb-12 sm:mb-16 border-b border-white/[0.08] pb-6">
+          <div class="s4-anim-el flex flex-wrap items-center justify-between gap-4 mb-10 sm:mb-16 border-b border-white/[0.08] pb-4 sm:pb-6">
             <div class="flex items-center gap-3.5">
               <span class="w-2 h-2 rounded-full bg-orange-400 shadow-[0_0_8px_#fdba74]"></span>
               <span class="text-xs font-mono tracking-[0.35em] text-orange-300 uppercase font-semibold">
@@ -1171,7 +1181,7 @@
             <div class="lg:col-span-5 flex flex-col justify-center space-y-8">
               <div>
                 <!-- Display Editorial Heading (SEO H2) -->
-                <h2 class="serif font-medium tracking-tight text-white text-4xl sm:text-5xl lg:text-6xl xl:text-[3.9rem] leading-[1.06] mb-8 select-none">
+                <h2 class="serif font-medium tracking-tight text-white text-3xl sm:text-5xl lg:text-6xl xl:text-[3.9rem] leading-[1.06] mb-6 sm:mb-8 select-none">
                   <span class="reveal-overflow">
                     <span class="s4-line block text-white">NÃO É SÓ UM SITE.</span>
                   </span>
@@ -1201,12 +1211,12 @@
               </div>
 
               <!-- Master Section 04 CTA -->
-              <div class="s4-anim-el flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2">
+              <div class="s4-anim-el flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2 w-full sm:w-auto">
                 <a
                   href="https://wa.me/5561996229988"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="btn-magnetic group relative inline-flex items-center gap-3 px-8 py-4 rounded-md border border-orange-300/50 bg-[#0a1128]/90 text-xs tracking-[0.25em] text-orange-100 font-semibold overflow-hidden transition-all duration-300 hover:text-[#050a1c] shadow-[0_0_30px_rgba(253,186,116,0.2)] backdrop-blur-md"
+                  class="btn-magnetic group relative inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-md border border-orange-300/50 bg-[#0a1128]/90 text-xs tracking-[0.2em] sm:tracking-[0.25em] text-orange-100 font-semibold overflow-hidden transition-all duration-300 hover:text-[#050a1c] shadow-[0_0_30px_rgba(253,186,116,0.2)] backdrop-blur-md w-full sm:w-auto text-center"
                 >
                   <span class="absolute inset-0 bg-gradient-to-r from-orange-300 via-amber-200 to-orange-400 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
                   <span class="relative z-10">CRIAR MEU SITE</span>
@@ -1294,7 +1304,7 @@
       <!-- ══════════════════════════════════════════════════════════════ -->
       <section
         id="problema"
-        class="relative min-h-screen flex flex-col justify-center py-24 sm:py-32 lg:py-36 px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-[#030714]"
+        class="relative min-h-screen flex flex-col justify-center py-16 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-[#030714]"
       >
         <!-- Background Image for Section 05 (dobra5 .png) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
@@ -1317,7 +1327,7 @@
         <div class="max-w-7xl mx-auto w-full relative z-10">
           
           <!-- Top Section Label / Microtext Header -->
-          <div class="s5-anim-el flex items-center justify-between gap-6 mb-14 sm:mb-18 border-b border-white/[0.08] pb-6">
+          <div class="s5-anim-el flex flex-wrap items-center justify-between gap-4 mb-10 sm:mb-18 border-b border-white/[0.08] pb-4 sm:pb-6">
             <div class="flex items-center gap-3.5">
               <span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fdba74]"></span>
               <span class="text-xs font-mono tracking-[0.35em] text-amber-300 uppercase font-semibold">
@@ -1336,7 +1346,7 @@
           <!-- Editorial Headline & Problem Narrative -->
           <div class="max-w-3xl mb-16 sm:mb-20">
             <!-- Editorial Display Headline (SEO H2) -->
-            <h2 class="serif font-medium tracking-tight text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.08] mb-8 select-none">
+            <h2 class="serif font-medium tracking-tight text-3xl sm:text-5xl lg:text-[3.6rem] leading-[1.08] mb-6 sm:mb-8 select-none">
               <span class="reveal-overflow">
                 <span class="s5-line block text-slate-100">ENQUANTO VOCÊ</span>
               </span>
@@ -1479,7 +1489,7 @@
       <!-- ══════════════════════════════════════════════════════════════ -->
       <section
         id="metodo"
-        class="relative min-h-screen flex flex-col justify-center py-24 sm:py-32 lg:py-40 px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-gradient-to-b from-[#050a1c] via-[#060e26] to-[#040816]"
+        class="relative min-h-screen flex flex-col justify-center py-16 sm:py-28 lg:py-40 px-4 sm:px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-gradient-to-b from-[#050a1c] via-[#060e26] to-[#040816]"
       >
         <!-- Atmospheric Ambient Lighting & Space Backdrop -->
         <div class="absolute top-1/4 left-1/3 w-[45rem] h-[45rem] rounded-full bg-cyan-500/[0.04] blur-[180px] pointer-events-none -z-10" aria-hidden="true"></div>
@@ -1489,7 +1499,7 @@
         <div class="max-w-7xl mx-auto w-full">
           
           <!-- Top Section Label / Editorial Microtelemetry -->
-          <div class="s6-anim-el flex items-center justify-between gap-6 mb-14 sm:mb-20 border-b border-white/[0.08] pb-6">
+          <div class="s6-anim-el flex flex-wrap items-center justify-between gap-4 mb-10 sm:mb-20 border-b border-white/[0.08] pb-4 sm:pb-6">
             <div class="flex items-center gap-3.5">
               <span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#67e8f9]"></span>
               <span class="text-xs font-mono tracking-[0.35em] text-cyan-300 uppercase font-semibold">
@@ -1507,7 +1517,7 @@
 
           <!-- Editorial Headline & Supporting Statement -->
           <div class="max-w-3xl mb-16 sm:mb-24">
-            <h2 class="serif font-medium tracking-tight text-4xl sm:text-5xl lg:text-[3.8rem] leading-[1.08] mb-6 select-none">
+            <h2 class="serif font-medium tracking-tight text-3xl sm:text-5xl lg:text-[3.8rem] leading-[1.08] mb-6 select-none">
               <span class="reveal-overflow">
                 <span class="s6-line block text-slate-100">DO PRIMEIRO CLIQUE</span>
               </span>
@@ -1867,7 +1877,7 @@
       <!-- ══════════════════════════════════════════════════════════════ -->
       <section
         id="trabalhos"
-        class="relative min-h-screen py-28 sm:py-36 lg:py-44 px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-gradient-to-b from-[#040816] via-[#050c20] to-[#040714]"
+        class="relative min-h-screen py-16 sm:py-28 lg:py-44 px-4 sm:px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-gradient-to-b from-[#040816] via-[#050c20] to-[#040714]"
       >
         <!-- Custom Floating Interactive Cursor Follower -->
         <div
@@ -1885,7 +1895,7 @@
         <div class="max-w-7xl mx-auto w-full">
           
           <!-- Top Section Label / Editorial Microtelemetry -->
-          <div class="s7-anim-el flex items-center justify-between gap-6 mb-16 sm:mb-24 border-b border-white/[0.08] pb-6">
+          <div class="s7-anim-el flex flex-wrap items-center justify-between gap-4 mb-10 sm:mb-24 border-b border-white/[0.08] pb-4 sm:pb-6">
             <div class="flex items-center gap-3.5">
               <span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fdba74]"></span>
               <span class="text-xs font-mono tracking-[0.35em] text-amber-300 uppercase font-semibold">
@@ -1903,7 +1913,7 @@
 
           <!-- Editorial Headline & Subtitle -->
           <div class="max-w-4xl mb-20 sm:mb-32">
-            <h2 class="serif font-medium tracking-tight text-4xl sm:text-5xl lg:text-[4.2rem] leading-[1.08] mb-6 select-none">
+            <h2 class="serif font-medium tracking-tight text-3xl sm:text-5xl lg:text-[4.2rem] leading-[1.08] mb-6 select-none">
               <span class="reveal-overflow">
                 <span class="s7-line block text-slate-100">PRESENÇA DIGITAL</span>
               </span>
@@ -1941,19 +1951,19 @@
               >
                 
                 <!-- Window Top Chrome Bar -->
-                <div class="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] bg-[#040a18]/90 text-[10px] font-mono text-slate-400">
-                  <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500/60"></span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500/60"></span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/60"></span>
-                    <div class="ml-3 flex items-center gap-1.5 px-3 py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300 font-mono text-[10px] hover:text-cyan-300 transition-colors">
-                      <span class="text-cyan-400">🔒</span>
-                      <span class="tracking-wide">https://fernandocorretor-six.vercel.app/</span>
+                <div class="flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-4 border-b border-white/[0.06] bg-[#040a18]/90 text-[10px] font-mono text-slate-400">
+                  <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                    <span class="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-rose-500/60 shrink-0"></span>
+                    <span class="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-amber-500/60 shrink-0"></span>
+                    <span class="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-emerald-500/60 shrink-0"></span>
+                    <div class="ml-1.5 sm:ml-3 flex items-center gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300 font-mono text-[9px] sm:text-[10px] hover:text-cyan-300 transition-colors truncate max-w-[140px] xs:max-w-[200px] sm:max-w-none">
+                      <span class="text-cyan-400 shrink-0">🔒</span>
+                      <span class="tracking-wide truncate">fernandocorretor-six.vercel.app</span>
                     </div>
                   </div>
-                  <div class="flex items-center gap-3">
+                  <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <span class="px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 font-semibold tracking-widest text-[9px]">01 / 02</span>
-                    <span class="text-slate-400 tracking-widest uppercase hidden sm:inline flex items-center gap-1">
+                    <span class="text-slate-400 tracking-widest uppercase hidden sm:inline-flex items-center gap-1">
                       <span>LIVE PREVIEW</span>
                       <span class="text-xs">↗</span>
                     </span>
@@ -2049,20 +2059,20 @@
               >
                 
                 <!-- Window Top Chrome Bar -->
-                <div class="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] bg-[#030d1c]/90 text-[10px] font-mono text-slate-400">
-                  <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500/60"></span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500/60"></span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/60"></span>
-                    <div class="ml-3 flex items-center gap-1.5 px-3 py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300 font-mono text-[10px] hover:text-emerald-300 transition-colors">
-                      <span class="text-emerald-400">📍</span>
-                      <span class="tracking-wide">maps.google.com/perfil-empresa-verificado</span>
+                <div class="flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-4 border-b border-white/[0.06] bg-[#030d1c]/90 text-[10px] font-mono text-slate-400">
+                  <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                    <span class="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-rose-500/60 shrink-0"></span>
+                    <span class="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-amber-500/60 shrink-0"></span>
+                    <span class="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-emerald-500/60 shrink-0"></span>
+                    <div class="ml-1.5 sm:ml-3 flex items-center gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300 font-mono text-[9px] sm:text-[10px] hover:text-emerald-300 transition-colors truncate max-w-[140px] xs:max-w-[200px] sm:max-w-none">
+                      <span class="text-emerald-400 shrink-0">📍</span>
+                      <span class="tracking-wide truncate">maps.google.com/perfil-empresa-verificado</span>
                     </div>
                   </div>
-                  <div class="flex items-center gap-3">
+                  <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <span class="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/40 text-emerald-300 font-semibold tracking-widest text-[9px]">02 / 02</span>
-                    <span class="text-slate-400 tracking-widest uppercase hidden sm:inline flex items-center gap-1">
-                      <span>DOMINÂNCIA REGIONAL</span>
+                    <span class="text-slate-400 tracking-widest uppercase hidden sm:inline-flex items-center gap-1">
+                      <span>DOMINÂNCIA</span>
                       <span class="text-xs">↗</span>
                     </span>
                   </div>
@@ -2232,7 +2242,7 @@
       <!-- ══════════════════════════════════════════════════════════════ -->
       <section
         id="google-presenca"
-        class="relative min-h-screen py-28 sm:py-36 lg:py-44 px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-[#030612]"
+        class="relative min-h-screen py-16 sm:py-28 lg:py-44 px-4 sm:px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-[#030612]"
       >
         <!-- Background Image for Section 08 (dobra8 .jpeg) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
@@ -2255,7 +2265,7 @@
         <div class="max-w-7xl mx-auto w-full relative z-10">
           
           <!-- Top Section Label / Editorial Microtelemetry -->
-          <div class="s8-anim-el flex items-center justify-between gap-6 mb-16 sm:mb-24 border-b border-white/[0.08] pb-6">
+          <div class="s8-anim-el flex flex-wrap items-center justify-between gap-4 mb-10 sm:mb-24 border-b border-white/[0.08] pb-4 sm:pb-6">
             <div class="flex items-center gap-3.5">
               <span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#67e8f9]"></span>
               <span class="text-xs font-mono tracking-[0.35em] text-cyan-300 uppercase font-semibold">
@@ -2281,7 +2291,7 @@
               
               <!-- Headline & Subtitle -->
               <div>
-                <h2 class="serif font-medium tracking-tight text-4xl sm:text-5xl lg:text-[4rem] leading-[1.08] mb-6 select-none">
+                <h2 class="serif font-medium tracking-tight text-3xl sm:text-5xl lg:text-[4rem] leading-[1.08] mb-6 select-none">
                   <span class="reveal-overflow">
                     <span class="s8-line block text-slate-100">CONFIANÇA SE CONSTRÓI</span>
                   </span>
@@ -2561,7 +2571,7 @@
       <!-- ══════════════════════════════════════════════════════════════ -->
       <section
         id="jornada"
-        class="relative min-h-screen py-28 sm:py-36 lg:py-44 px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-[#030612]"
+        class="relative min-h-screen py-16 sm:py-28 lg:py-44 px-4 sm:px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-[#030612]"
       >
         <!-- Background Image for Section 09 (dobra9.png) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
@@ -2583,7 +2593,7 @@
         <div class="max-w-7xl mx-auto w-full relative z-10">
           
           <!-- Top Section Label / Editorial Microtelemetry -->
-          <div class="s9-anim-el flex items-center justify-between gap-6 mb-16 sm:mb-24 border-b border-white/[0.08] pb-6">
+          <div class="s9-anim-el flex flex-wrap items-center justify-between gap-4 mb-10 sm:mb-24 border-b border-white/[0.08] pb-4 sm:pb-6">
             <div class="flex items-center gap-3.5">
               <span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fdba74]"></span>
               <span class="text-xs font-mono tracking-[0.35em] text-amber-300 uppercase font-semibold">
@@ -2603,7 +2613,7 @@
 
           <!-- Editorial Headline & Subtitle -->
           <div class="max-w-4xl mb-20 sm:mb-28">
-            <h2 class="serif font-medium tracking-tight text-4xl sm:text-5xl lg:text-[4.2rem] leading-[1.08] mb-6 select-none">
+            <h2 class="serif font-medium tracking-tight text-3xl sm:text-5xl lg:text-[4.2rem] leading-[1.08] mb-6 select-none">
               <span class="reveal-overflow">
                 <span class="s9-line block text-slate-100">SER ENCONTRADO É O COMEÇO.</span>
               </span>
@@ -2829,7 +2839,7 @@
       <!-- ══════════════════════════════════════════════════════════════ -->
       <section
         id="contato"
-        class="relative min-h-screen py-28 sm:py-36 lg:py-48 px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-gradient-to-b from-[#040816] via-[#030612] to-[#010308] flex flex-col justify-between"
+        class="relative min-h-screen py-16 sm:py-28 lg:py-48 px-4 sm:px-6 lg:px-12 z-20 overflow-hidden border-t border-white/[0.07] bg-gradient-to-b from-[#040816] via-[#030612] to-[#010308] flex flex-col justify-between"
       >
         <!-- Atmospheric Celestial Glow & Deep Space Field -->
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60rem] h-[60rem] rounded-full bg-cyan-500/[0.035] blur-[200px] pointer-events-none -z-10" aria-hidden="true"></div>
@@ -2841,7 +2851,7 @@
         <div class="max-w-7xl mx-auto w-full flex-1 flex flex-col justify-between">
           
           <!-- Top Section Label / Editorial Microtelemetry -->
-          <div class="s10-anim-el flex items-center justify-between gap-6 mb-16 sm:mb-24 border-b border-white/[0.08] pb-6">
+          <div class="s10-anim-el flex flex-wrap items-center justify-between gap-4 mb-10 sm:mb-24 border-b border-white/[0.08] pb-4 sm:pb-6">
             <div class="flex items-center gap-3.5">
               <span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fdba74]"></span>
               <span class="text-xs font-mono tracking-[0.35em] text-amber-300 uppercase font-semibold">
@@ -2867,7 +2877,7 @@
             </div>
 
             <!-- Headline Principal -->
-            <h2 class="serif italic font-medium tracking-tight text-4xl sm:text-6xl lg:text-[5.2rem] leading-[1.06] mb-8 select-none">
+            <h2 class="serif italic font-medium tracking-tight text-3xl sm:text-6xl lg:text-[5.2rem] leading-[1.06] mb-6 sm:mb-8 select-none">
               <span class="reveal-overflow">
                 <span class="s10-line block text-slate-100">SEU PRÓXIMO</span>
               </span>
@@ -2894,7 +2904,7 @@
                 href="https://wa.me/5561996229988?text=Ol%C3%A1!%20Conheci%20a%20Level%20Up%20e%20gostaria%20de%20conversar%20sobre%20como%20melhorar%20a%20presen%C3%A7a%20digital%20da%20minha%20empresa."
                 target="_blank"
                 rel="noopener noreferrer"
-                class="btn-magnetic group relative inline-flex items-center gap-4 px-10 sm:px-14 py-5 sm:py-6 rounded-xl border border-amber-300/50 bg-[#061024]/80 text-sm sm:text-base font-mono tracking-[0.25em] text-amber-100 font-semibold overflow-hidden transition-all duration-300 hover:text-[#030612] shadow-[0_0_40px_rgba(253,186,116,0.25)] hover:border-amber-200 backdrop-blur-xl"
+                class="btn-magnetic group relative inline-flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-14 py-4 sm:py-6 rounded-xl border border-amber-300/50 bg-[#061024]/80 text-xs sm:text-base font-mono tracking-[0.2em] sm:tracking-[0.25em] text-amber-100 font-semibold overflow-hidden transition-all duration-300 hover:text-[#030612] shadow-[0_0_40px_rgba(253,186,116,0.25)] hover:border-amber-200 backdrop-blur-xl w-full sm:w-auto text-center"
               >
                 <span class="absolute inset-0 bg-gradient-to-r from-amber-300 via-orange-200 to-amber-400 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
                 <span class="relative z-10">VAMOS CONVERSAR</span>
@@ -2916,8 +2926,8 @@
           <!-- ══════════════════════════════════════════════════════════════ -->
           <!-- MINIMALIST EDITORIAL FOOTER                                    -->
           <!-- ══════════════════════════════════════════════════════════════ -->
-          <footer class="s10-anim-el pt-16 border-t border-white/[0.08] mt-16 text-xs font-mono text-slate-400">
-            <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 text-center md:text-left pb-10">
+          <footer class="s10-anim-el pt-12 sm:pt-16 border-t border-white/[0.08] mt-12 sm:mt-16 text-xs font-mono text-slate-400">
+            <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 sm:gap-8 text-center md:text-left pb-8 sm:pb-10">
               
               <!-- Left Column: Agency Identity -->
               <div class="space-y-1.5">

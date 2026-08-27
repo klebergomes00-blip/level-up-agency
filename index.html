@@ -3176,7 +3176,7 @@
         gsap.registerPlugin(ScrollTrigger);
 
         ScrollTrigger.config({
-          autoRefreshEvents: "DOMContentLoaded,load",
+          autoRefreshEvents: "visibilitychange,DOMContentLoaded,load,resize",
           limitCallbacks: true,
           syncInterval: 100
         });
@@ -3237,7 +3237,8 @@
               trigger: 'body',
               start: 'top top',
               end: 'bottom bottom',
-              scrub: 1.0
+              scrub: 1.0,
+              anticipatePin: 1
             },
             y: 160,
             scale: 1.05,
@@ -3249,6 +3250,7 @@
             start: 'top top',
             end: 'bottom top',
             scrub: 0.3,
+            anticipatePin: 1,
             onUpdate: (self) => {
               const prompt = document.getElementById('scroll-prompt');
               if (prompt) {
@@ -3792,7 +3794,6 @@
           );
         }
       }
-      }
 
       /* ══════════ 7. PROGRESSIVE INTERSECTION OBSERVER ENGINE ══════════ */
       const sectionBuilders = {
@@ -3815,30 +3816,42 @@
         const builder = sectionBuilders[id];
         if (typeof builder === 'function') {
           builder();
+          requestAnimationFrame(() => {
+            if (window.ScrollTrigger) {
+              ScrollTrigger.refresh();
+            }
+          });
         }
       }
 
       function setupLazySectionEngine() {
         initHeroAnimations();
 
-        if ('IntersectionObserver' in window) {
-          const sectionObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                const id = entry.target.id;
-                activateSection(id);
-                sectionObserver.unobserve(entry.target);
-              }
-            });
-          }, { rootMargin: '350px 0px 350px 0px', threshold: 0.01 });
+        function initIdleObserver() {
+          if ('IntersectionObserver' in window) {
+            const sectionObserver = new IntersectionObserver((entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  const id = entry.target.id;
+                  activateSection(id);
+                  sectionObserver.unobserve(entry.target);
+                }
+              });
+            }, { rootMargin: '350px 0px 350px 0px', threshold: 0.01 });
 
-          Object.keys(sectionBuilders).forEach((id) => {
-            const el = document.getElementById(id);
-            if (el) sectionObserver.observe(el);
-          });
+            Object.keys(sectionBuilders).forEach((id) => {
+              const el = document.getElementById(id);
+              if (el) sectionObserver.observe(el);
+            });
+          } else {
+            Object.keys(sectionBuilders).forEach(activateSection);
+          }
+        }
+
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(initIdleObserver, { timeout: 1200 });
         } else {
-          // Fallback if IntersectionObserver is unavailable
-          Object.keys(sectionBuilders).forEach(activateSection);
+          setTimeout(initIdleObserver, 60);
         }
       }
 

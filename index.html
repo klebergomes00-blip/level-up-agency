@@ -650,10 +650,11 @@
         <!-- Background Video for Section 02 (seunda dobra.mp4) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
           <video id="video-dobra-2"
+            autoplay
             loop
             muted
             playsinline
-            preload="none"
+            preload="metadata"
             class="w-full h-full object-cover object-center opacity-45 md:opacity-55 filter brightness-105 contrast-110"
            poster="assets/images/poster-dobra2.webp">
             <source src="assets/videos/bg-dobra2.webm" type="video/webm" />
@@ -840,10 +841,11 @@
         <!-- Background Video for Section 03 (dobra3.mp4) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
           <video id="video-dobra-3"
+            autoplay
             loop
             muted
             playsinline
-            preload="none"
+            preload="metadata"
             class="w-full h-full object-cover object-center opacity-45 md:opacity-55 filter brightness-105 contrast-110"
            poster="assets/images/poster-dobra3.webp">
             <source src="assets/videos/bg-dobra3.webm" type="video/webm" />
@@ -1258,10 +1260,11 @@
                   
                   <!-- Full-Bleed Video Media (projeto2.mp4 - 100% Uncropped) -->
                   <video id="video-project-2"
+                    autoplay
                     loop
                     muted
                     playsinline
-                    preload="none"
+                    preload="metadata"
                     class="w-full h-full object-cover object-center filter brightness-105 contrast-105 group-hover:scale-[1.02] transition-transform duration-700 block"
                    poster="assets/images/poster-projeto2.webp">
                     <source src="assets/videos/showcase-projeto2.webm" type="video/webm" />
@@ -1283,10 +1286,11 @@
                   
                   <!-- Full-Bleed Video Media (projeto1.mp4 - 100% Uncropped) -->
                   <video id="video-project-1"
+                    autoplay
                     loop
                     muted
                     playsinline
-                    preload="none"
+                    preload="metadata"
                     class="w-full h-full object-cover object-center filter brightness-105 contrast-105 group-hover:scale-[1.02] transition-transform duration-700 block"
                    poster="assets/images/poster-projeto1.webp">
                     <source src="assets/videos/showcase-projeto1.webm" type="video/webm" />
@@ -3712,21 +3716,20 @@
         }
       }
 
-      let animationsReady = false;
-      function triggerAnimationsOnce() {
-        if (animationsReady) return;
-        animationsReady = true;
-        initDeferredAnimations();
+            // Initialize animations on DOM ready so all ScrollTrigger reveals are 100% active and reliable
+      function startEngine() {
+        if (typeof initDeferredAnimations === 'function') {
+          initDeferredAnimations();
+        }
       }
 
-      // Initialize on real user interaction (scroll, touch, mousemove)
-      window.addEventListener('scroll', triggerAnimationsOnce, { passive: true, once: true });
-      window.addEventListener('touchstart', triggerAnimationsOnce, { passive: true, once: true });
-      window.addEventListener('pointerdown', triggerAnimationsOnce, { passive: true, once: true });
-      window.addEventListener('keydown', triggerAnimationsOnce, { passive: true, once: true });
-
-      // Fallback after 5.5s (completely outside the synthetic Lighthouse audit window)
-      setTimeout(triggerAnimationsOnce, 5500);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          requestAnimationFrame(startEngine);
+        });
+      } else {
+        requestAnimationFrame(startEngine);
+      }
       }
 
       /* ══════════════════════════════════════════════════════════════ */

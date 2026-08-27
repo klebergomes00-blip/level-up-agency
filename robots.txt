@@ -1,0 +1,5 @@
+# Robots.txt for LevelUp Agency
+User-agent: *
+Allow: /
+
+Sitemap: https://levelup.agency/sitemap.xml

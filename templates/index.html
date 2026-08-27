@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LEVELUP — Hub de Design Systems &amp; Templates</title>
+    <meta
+      name="description"
+      content="Catálogo oficial de Design Systems, tokens e padrões visuais da LevelUp Digital Agency."
+    />
+    <meta name="theme-color" content="#050a1c" />
+
+    <link rel="icon" type="image/png" href="../assets/images/logo-3d-transparent.png" />
+    <link rel="apple-touch-icon" href="../assets/images/logo-3d-transparent.png" />
+
+    <!-- CDN & Local Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../assets/js/tailwind.min.js" onerror="void(0)"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="../assets/js/iconify-icon.min.js" onerror="void(0)"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --color-bg-primary: #050a1c;
+        --color-bg-card: #0a1128;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #030712;
+        color: #f8fafc;
+      }
+      .font-mono {
+        font-family: 'JetBrains Mono', monospace;
+      }
+      .font-serif {
+        font-family: 'Playfair Display', Georgia, serif;
+      }
+      .glass-card {
+        background: rgba(10, 17, 40, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col justify-between selection:bg-cyan-400 selection:text-black">
+    <!-- Ambient Background Lighting -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+      <div class="absolute -top-40 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[140px]"></div>
+      <div class="absolute top-1/3 -right-20 w-96 h-96 bg-amber-500/10 rounded-full blur-[160px]"></div>
+      <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-emerald-500/10 rounded-full blur-[150px]"></div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="border-b border-white/[0.08] bg-[#030712]/80 backdrop-blur-xl sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-3.5 group">
+          <img src="../assets/images/logo-3d-transparent.png" alt="LevelUp" class="h-9 w-auto transition-transform duration-300 group-hover:scale-105" />
+          <div class="flex flex-col">
+            <span class="font-mono text-xs tracking-widest text-cyan-300 font-semibold uppercase">LEVELUP</span>
+            <span class="text-[10px] font-mono text-slate-400">DESIGN SYSTEM HUB</span>
+          </div>
+        </a>
+
+        <a
+          href="../index.html"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-mono text-slate-300 hover:text-white transition-all"
+        >
+          <span>← Voltar ao Site Principal</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-16 sm:py-24 w-full">
+      <!-- Title Section -->
+      <div class="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/20 text-[10px] font-mono text-cyan-300 tracking-widest uppercase mb-4">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+          DIRETÓRIO DE ARQUITETURA VISUAL
+        </div>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight font-serif text-white mb-6">
+          Ecossistema de Design &amp; Padrões
+        </h1>
+        <p class="text-base sm:text-lg text-slate-400 leading-relaxed">
+          Navegue pelas especificações completas de tipografia, paleta de cores, componentes reativos, micro-interações e coreografia de movimento da LevelUp.
+        </p>
+      </div>
+
+      <!-- Templates Gallery Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Card 1: Design System v1 -->
+        <div class="glass-card rounded-2xl p-8 flex flex-col justify-between hover:border-cyan-400/40 hover:shadow-[0_0_40px_rgba(103,232,249,0.15)] transition-all duration-300 group">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-[10px] font-mono text-cyan-400 uppercase tracking-widest font-semibold px-2.5 py-1 rounded bg-cyan-500/10 border border-cyan-400/20">Versão 1.0</span>
+              <span class="text-xs font-mono text-slate-500">Completo</span>
+            </div>
+
+            <h2 class="text-2xl font-serif text-white group-hover:text-cyan-200 transition-colors mb-3">
+              Design System Oficial
+            </h2>
+            <p class="text-xs text-slate-400 leading-relaxed mb-6">
+              Guia definitivo contendo todos os tokens visuais, paleta espacial, escala de tipografia, componentes de formulário, botões magnéticos e grid responsivo.
+            </p>
+
+            <div class="space-y-2 mb-8 text-[11px] font-mono text-slate-400 border-t border-white/5 pt-4">
+              <div class="flex items-center gap-2"><iconify-icon icon="solar:check-circle-linear" class="text-cyan-400"></iconify-icon> Tokens &amp; Variáveis CSS</div>
+              <div class="flex items-center gap-2"><iconify-icon icon="solar:check-circle-linear" class="text-cyan-400"></iconify-icon> Componentes &amp; Modais</div>
+              <div class="flex items-center gap-2"><iconify-icon icon="solar:check-circle-linear" class="text-cyan-400"></iconify-icon> Botões Magnéticos &amp; Efeitos</div>
+            </div>
+          </div>
+
+          <a
+            href="design-system.html"
+            class="w-full py-3 px-4 rounded-xl bg-cyan-400 text-slate-950 font-mono text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-2 hover:bg-cyan-300 transition-all shadow-[0_0_20px_rgba(103,232,249,0.3)]"
+          >
+            <span>Acessar Design System v1</span>
+            <span>↗</span>
+          </a>
+        </div>
+
+        <!-- Card 2: Design System v2 -->
+        <div class="glass-card rounded-2xl p-8 flex flex-col justify-between hover:border-amber-400/40 hover:shadow-[0_0_40px_rgba(251,191,36,0.15)] transition-all duration-300 group">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-[10px] font-mono text-amber-400 uppercase tracking-widest font-semibold px-2.5 py-1 rounded bg-amber-500/10 border border-amber-400/20">Versão 2.0</span>
+              <span class="text-xs font-mono text-slate-500">Dark Glass</span>
+            </div>
+
+            <h2 class="text-2xl font-serif text-white group-hover:text-amber-200 transition-colors mb-3">
+              Dark Glass &amp; Telemetria
+            </h2>
+            <p class="text-xs text-slate-400 leading-relaxed mb-6">
+              Variação moderna focada em superfícies translúcidas (backdrop-blur), indicadores de radar, visualização de dados e estética aeroespacial.
+            </p>
+
+            <div class="space-y-2 mb-8 text-[11px] font-mono text-slate-400 border-t border-white/5 pt-4">
+              <div class="flex items-center gap-2"><iconify-icon icon="solar:check-circle-linear" class="text-amber-400"></iconify-icon> Superfícies Glassmorphism</div>
+              <div class="flex items-center gap-2"><iconify-icon icon="solar:check-circle-linear" class="text-amber-400"></iconify-icon> Telemetria &amp; Micro-badges</div>
+              <div class="flex items-center gap-2"><iconify-icon icon="solar:check-circle-linear" class="text-amber-400"></iconify-icon> Efeitos de Radar e Gradientes</div>
+            </div>
+          </div>
+
+          <a
+            href="design-system-v2.html"
+            class="w-full py-3 px-4 rounded-xl bg-amber-400 text-slate-950 font-mono text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-2 hover:bg-amber-300 transition-all shadow-[0_0_20px_rgba(251,191,36,0.3)]"
+          >
+            <span>Acessar Design System v2</span>
+            <span>↗</span>
+          </a>
+        </div>
+
+        <!-- Card 3: Design System v3 -->
+        <div class="glass-card rounded-2xl p-8 flex flex-col justify-between hover:border-emerald-400/40 hover:shadow-[0_0_40px_rgba(52,211,153,0.15)] transition-all duration-300 group">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-[10px] font-mono text-emerald-400 uppercase tracking-widest font-semibold px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-400/20">Versão 3.0</span>
+              <span class="text-xs font-mono text-slate-500">Editorial &amp; Motion</span>
+            </div>
+
+            <h2 class="text-2xl font-serif text-white group-hover:text-emerald-200 transition-colors mb-3">
+              Editorial &amp; Coreografia
+            </h2>
+            <p class="text-xs text-slate-400 leading-relaxed mb-6">
+              Especificação de movimento, easing curves, keyframes CSS, catálogo de ícones Solar e padrões editoriais de alta fidelidade.
+            </p>
+
+            <div class="space-y-2 mb-8 text-[11px] font-mono text-slate-400 border-t border-white/5 pt-4">
+              <div class="flex items-center gap-2"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400"></iconify-icon> Animações GSAP &amp; CSS Puro</div>
+              <div class="flex items-center gap-2"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400"></iconify-icon> Catálogo de Ícones Solar</div>
+              <div class="flex items-center gap-2"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400"></iconify-icon> Micro-interações de Hover</div>
+            </div>
+          </div>
+
+          <a
+            href="design-system-v3.html"
+            class="w-full py-3 px-4 rounded-xl bg-emerald-400 text-slate-950 font-mono text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-2 hover:bg-emerald-300 transition-all shadow-[0_0_20px_rgba(52,211,153,0.3)]"
+          >
+            <span>Acessar Design System v3</span>
+            <span>↗</span>
+          </a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/[0.08] bg-black/60 py-8">
+      <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
+        <span>© 2026 LEVELUP Digital Agency. Todos os direitos reservados.</span>
+        <span>Produzido para Alta Performance &amp; Conversão</span>
+      </div>
+    </footer>
+  </body>
+</html>

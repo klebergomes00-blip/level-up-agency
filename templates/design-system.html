@@ -1,0 +1,2357 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="../assets/images/logo-3d-transparent.png" />
+    <title>Noah Vance — Generative Design System & Living Component Architecture</title>
+    
+    <!-- External CDN & Local Fallback Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../assets/js/tailwind.min.js" onerror="void(0)"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="../assets/js/gsap.min.js" onerror="void(0)"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="../assets/js/ScrollTrigger.min.js" onerror="void(0)"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../assets/js/lucide.min.js" onerror="void(0)"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="../assets/js/iconify-icon.min.js" onerror="void(0)"></script>
+
+    <!-- Google Fonts: Playfair Display + Inter + JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --color-bg-primary: #050a1c;
+        --color-bg-card: #0a1128;
+        --color-bg-elevated: #0f1738;
+        --color-accent-orange: #fdba74;
+        --color-accent-orange-bright: #fb923c;
+        --color-accent-cyan: #67e8f9;
+        --color-accent-teal: #5eead4;
+        --color-text-white: #ffffff;
+        --color-text-slate: #94a3b8;
+        --font-serif: 'Playfair Display', serif;
+        --font-sans: 'Inter', sans-serif;
+        --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: geometricPrecision;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--color-bg-primary);
+        color: #e2e8f0;
+        overflow-x: hidden;
+      }
+
+      .serif {
+        font-family: var(--font-serif);
+      }
+
+      .mono {
+        font-family: var(--font-mono);
+      }
+
+      /* Custom Scrollbars */
+      ::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #050a1c;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(253, 186, 116, 0.25);
+        border-radius: 9999px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(253, 186, 116, 0.55);
+      }
+
+      /* ══════════ TRANSPARENT LETTERING & STROKE ENGINE ══════════ */
+      .stroke-text-white {
+        -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.85);
+        color: transparent;
+      }
+      .stroke-text-light {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.35);
+        color: transparent;
+      }
+      .stroke-text-orange {
+        -webkit-text-stroke: 1px rgba(253, 186, 116, 0.7);
+        color: transparent;
+      }
+      .stroke-text-cyan {
+        -webkit-text-stroke: 1px rgba(103, 232, 249, 0.7);
+        color: transparent;
+      }
+      
+      .text-watermark {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
+        color: transparent;
+        user-select: none;
+        pointer-events: none;
+      }
+
+      .text-gradient-shimmer {
+        background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.7) 40%, #fdba74 80%, #67e8f9 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-size: 200% auto;
+        animation: textShimmer 6s linear infinite;
+      }
+
+      .text-ghost-hover {
+        -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.5);
+        color: transparent;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .text-ghost-hover:hover {
+        -webkit-text-stroke: 1.5px transparent;
+        color: #ffffff;
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(253, 186, 116, 0.4);
+      }
+
+      @keyframes textShimmer {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      /* ══════════ FLASH-CARD CONIC GLOW ENGINE ══════════ */
+      .flash-card {
+        position: relative;
+        --cursor-angle: 0deg;
+        --proximity: 0;
+      }
+      .flash-card::before,
+      .flash-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: conic-gradient(
+          from var(--cursor-angle, 0deg),
+          rgba(253, 186, 116, 0.95),
+          transparent 55deg,
+          transparent 305deg,
+          rgba(253, 186, 116, 0.95)
+        );
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: exclude;
+        opacity: var(--proximity, 0);
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+        z-index: 20;
+      }
+      .flash-card::after {
+        filter: blur(14px);
+        opacity: calc(var(--proximity, 0) * 0.7);
+        z-index: 19;
+      }
+
+      .shell-card {
+        --cursor-angle: 0deg;
+        --glow-opacity: 0;
+      }
+
+      /* ══════════ LASER & GLOW PULSE KEYFRAMES ══════════ */
+      @keyframes laserPulse {
+        0%, 100% { opacity: 0.45; transform: scaleY(0.98); }
+        50% { opacity: 1; transform: scaleY(1); }
+      }
+      .laser-pulse {
+        animation: laserPulse 3.5s ease-in-out infinite;
+      }
+
+      @keyframes floatSlow {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-12px) rotate(1deg); }
+      }
+      .animate-float-slow {
+        animation: floatSlow 6s ease-in-out infinite;
+      }
+
+      @keyframes orbitSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .animate-orbit-spin {
+        animation: orbitSpin 32s linear infinite;
+      }
+
+      /* Glassmorphism Specs */
+      .glass-panel {
+        background: rgba(10, 17, 40, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .glass-panel-subtle {
+        background: rgba(255, 255, 255, 0.025);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      /* Spec Code Tag */
+      .spec-tag {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+      }
+
+      .ds-section-divider {
+        position: relative;
+        padding-bottom: 2.5rem;
+        margin-bottom: 4rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      }
+    </style>
+  </head>
+
+  <body class="bg-[#050a1c] text-slate-200 antialiased overflow-x-hidden selection:bg-orange-400/30 selection:text-orange-100">
+    
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- FIXED PARALLAX BACKGROUND LAYERS & STARLIGHT                   -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <!-- Ambient Fluid Mesh Blobs -->
+      <div id="bg-layer-1" class="absolute -inset-40 opacity-70">
+        <div class="absolute top-[3%] left-[8%] w-[45rem] h-[45rem] rounded-full bg-blue-700/20 blur-[130px]"></div>
+        <div class="absolute top-[35%] right-[5%] w-[38rem] h-[38rem] rounded-full bg-indigo-600/18 blur-[110px]"></div>
+        <div class="absolute top-[65%] left-[15%] w-[40rem] h-[40rem] rounded-full bg-cyan-600/12 blur-[130px]"></div>
+        <div class="absolute bottom-[5%] right-[20%] w-[35rem] h-[35rem] rounded-full bg-orange-500/10 blur-[140px]"></div>
+      </div>
+      
+      <!-- Ambient Starlight Points -->
+      <div id="bg-layer-2" class="absolute -inset-20 opacity-80">
+        <div class="absolute top-[12%] right-[22%] w-1.5 h-1.5 rounded-full bg-white/70 shadow-[0_0_8px_#fff]"></div>
+        <div class="absolute top-[28%] left-[12%] w-1 h-1 rounded-full bg-white/50"></div>
+        <div class="absolute top-[45%] right-[8%] w-2 h-2 rounded-full bg-orange-300/60 shadow-[0_0_12px_#fdba74]"></div>
+        <div class="absolute top-[62%] left-[25%] w-1 h-1 rounded-full bg-white/60"></div>
+        <div class="absolute top-[78%] right-[32%] w-1.5 h-1.5 rounded-full bg-cyan-300/60 shadow-[0_0_10px_#67e8f9]"></div>
+        <div class="absolute top-[90%] left-[45%] w-1 h-1 rounded-full bg-white/40"></div>
+      </div>
+
+      <!-- Dot-Matrix Grid Overlay -->
+      <div
+        id="bg-layer-3"
+        class="absolute inset-0 opacity-[0.035]"
+        style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 48px 48px;"
+      ></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- TOP HORIZONTAL NAVIGATION (Glassmorphism Sticky Topbar)       -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <header
+      id="nav"
+      class="fixed top-0 inset-x-0 z-50 backdrop-blur-2xl bg-[#050a1c]/80 border-b border-white/10 transition-all duration-300"
+    >
+      <nav class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+        <!-- Brand Monogram & Spec Title -->
+        <div class="flex items-center gap-3.5">
+          <a
+            href="#hero"
+            class="group flex items-center justify-center w-9 h-9 rounded-full border border-white/15 hover:border-orange-400/60 transition-all duration-500 hover:rotate-[360deg] bg-white/[0.03] shadow-[0_0_15px_rgba(253,186,116,0.15)]"
+          >
+            <span class="serif text-base font-semibold text-white group-hover:text-orange-200 transition-colors">N</span>
+          </a>
+          <div class="flex flex-col">
+            <span class="text-xs font-semibold tracking-[0.22em] text-white">NOAH VANCE</span>
+            <span class="text-[10px] tracking-[0.28em] text-orange-300/90 font-medium">DESIGN SYSTEM v2.4</span>
+          </div>
+        </div>
+
+        <!-- Section Navigation Links -->
+        <div class="hidden lg:flex items-center gap-6 text-[11px] tracking-[0.22em] font-medium text-slate-400">
+          <a href="#hero" class="nav-link relative py-1 hover:text-white transition-colors duration-300">0. HERO</a>
+          <a href="#typography" class="nav-link relative py-1 hover:text-white transition-colors duration-300">1. TYPOGRAPHY</a>
+          <a href="#colors" class="nav-link relative py-1 hover:text-white transition-colors duration-300">2. COLOR SYSTEM</a>
+          <a href="#components" class="nav-link relative py-1 hover:text-white transition-colors duration-300">3. COMPONENTS</a>
+          <a href="#icons" class="nav-link relative py-1 hover:text-white transition-colors duration-300">4. ICONS</a>
+          <a href="#motion" class="nav-link relative py-1 hover:text-white transition-colors duration-300">5. MOTION</a>
+          <a href="#playground" class="nav-link relative py-1 hover:text-white transition-colors duration-300">6. PLAYGROUND</a>
+        </div>
+
+        <!-- Quick Actions: Living Spec Badge & Action Button -->
+        <div class="flex items-center gap-3">
+          <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[10px] tracking-[0.2em] text-slate-300">
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-ping"></span>
+            <span class="text-orange-200/90">LIVING CANON</span>
+          </div>
+          <a
+            href="#playground"
+            class="hidden md:inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-400/10 border border-orange-400/40 text-orange-200 text-xs tracking-[0.2em] font-medium hover:bg-orange-400/20 hover:border-orange-300 transition-all duration-300 shadow-[0_0_20px_rgba(253,186,116,0.2)]"
+          >
+            <span>TOKENS</span>
+            <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+          </a>
+          <button id="menu-btn" class="lg:hidden text-slate-300 hover:text-white p-2">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Mobile Dropdown Menu -->
+      <div id="mobile-menu" class="hidden lg:hidden px-6 py-5 border-t border-white/10 bg-[#050a1c]/95 backdrop-blur-2xl flex flex-col gap-3 text-xs tracking-[0.2em] text-slate-300">
+        <a href="#hero" class="py-2 hover:text-white">0. HERO SHOWCASE</a>
+        <a href="#typography" class="py-2 hover:text-white">1. TYPOGRAPHY & LETTERING</a>
+        <a href="#colors" class="py-2 hover:text-white">2. COLOR SYSTEM & SURFACES</a>
+        <a href="#components" class="py-2 hover:text-white">3. UI COMPONENTS</a>
+        <a href="#icons" class="py-2 hover:text-white">4. ICON SYSTEM</a>
+        <a href="#motion" class="py-2 hover:text-white">5. MOTION & ANIMATION</a>
+        <a href="#playground" class="py-2 text-orange-300">6. INTERACTIVE PLAYGROUND</a>
+      </div>
+    </header>
+
+    <main class="relative z-10">
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 0. SHOWSTOPPER FIRST FOLD (HERO CAPABILITIES SHOWCASE)        -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <section
+        id="hero"
+        class="relative min-h-screen flex flex-col items-center justify-center pt-28 pb-20 overflow-hidden"
+      >
+        <!-- Background WebGL Shader (Live Particle Mesh System) -->
+        <canvas
+          id="hero-gl"
+          class="absolute inset-0 w-full h-full pointer-events-none z-0"
+        ></canvas>
+
+        <!-- Vertical Luminescent Laser Pulse (Optical Axis) -->
+        <div
+          id="hero-laser"
+          class="absolute inset-y-0 left-1/2 pointer-events-none z-0"
+          aria-hidden="true"
+        >
+          <div class="relative w-px h-full -translate-x-1/2">
+            <div class="laser-pulse absolute inset-y-0 -left-12 w-24 bg-cyan-500/15 blur-3xl"></div>
+            <div class="laser-pulse absolute inset-y-0 -left-2 w-4 bg-blue-400/35 blur-md"></div>
+            <div class="laser-pulse absolute inset-y-0 -left-px w-0.5 bg-gradient-to-b from-transparent via-cyan-200 to-transparent"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-cyan-100 blur-[3px] laser-pulse"></div>
+          </div>
+        </div>
+
+        <!-- Giant Watermark Transparent Lettering in Background -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden select-none">
+          <span class="text-watermark serif text-[18vw] font-bold tracking-tighter opacity-15 transform -translate-y-6 scale-110">
+            GENESIS
+          </span>
+        </div>
+
+        <!-- Numeric & Sparkle Stage Annotations -->
+        <div class="absolute top-1/3 left-6 md:left-12 hero-el flex items-center gap-3 text-xs tracking-[0.35em] text-slate-500 z-10">
+          <span class="text-orange-300/80 font-mono">00</span>
+          <span class="w-10 h-px bg-slate-700"></span>
+          <span class="hidden sm:inline text-[10px] tracking-[0.3em] text-slate-500 uppercase">System Canon</span>
+        </div>
+        <div class="absolute top-1/3 right-6 md:right-12 hero-el flex items-center gap-3 text-xs tracking-[0.35em] text-slate-500 z-10">
+          <span class="hidden sm:inline text-[10px] tracking-[0.3em] text-slate-500 uppercase">Living Spec</span>
+          <span class="w-10 h-px bg-slate-700"></span>
+          <i data-lucide="sparkles" class="w-4 h-4 text-orange-300 animate-pulse"></i>
+        </div>
+
+        <!-- Interactive 3D Torus Sculpture (Centerpiece with Elastic Tilt) -->
+        <div
+          id="torus-container"
+          class="relative w-64 h-64 md:w-80 md:h-80 mb-8 hero-el rounded-full z-10 cursor-grab active:cursor-grabbing"
+        >
+          <!-- Conic Flashlight Card Wrapper -->
+          <div id="torus" class="flash-card relative w-full h-full rounded-full p-[2px] transition-transform duration-300">
+            <img
+              src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/e8434c85-a821-467d-8899-e9f0d5e32184_800w.webp"
+              alt="Abstract generative 3D artwork sculpture"
+              class="w-full h-full object-cover rounded-full shadow-[0_0_60px_rgba(29,78,216,0.35)] relative z-10"
+              onerror="this.src='../assets/images/case-study-author.webp'"
+            />
+            <!-- Orbiting Outer Rings -->
+            <div class="absolute -inset-6 rounded-full border border-white/10 animate-[spin_28s_linear_infinite] pointer-events-none"></div>
+            <div class="absolute -inset-12 rounded-full border border-orange-400/10 border-dashed animate-[spin_45s_linear_infinite_reverse] pointer-events-none"></div>
+            <!-- Orbiting Badge Tag -->
+            <div class="absolute -top-3 -right-3 z-20 px-3 py-1 rounded-full glass-panel border border-orange-300/40 text-[10px] tracking-[0.25em] text-orange-200 flex items-center gap-1.5 shadow-[0_0_20px_rgba(253,186,116,0.3)] animate-float-slow">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-300 animate-ping"></span>
+              <span>3D FORM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Typography Hierarchy with Transparent & Luminous White Lettering -->
+        <div class="text-center px-4 max-w-4xl mx-auto z-10 relative">
+          <!-- Overline / Eyebrow -->
+          <p class="hero-el text-xs md:text-sm tracking-[0.55em] text-orange-300/90 font-medium mb-3 uppercase flex items-center justify-center gap-3">
+            <span class="w-6 h-px bg-orange-400/40"></span>
+            I L L U S T R A T I O N &nbsp;·&nbsp; G E N E R A T I V E &nbsp; S Y S T E M
+            <span class="w-6 h-px bg-orange-400/40"></span>
+          </p>
+
+          <!-- Master Transparent + White Stroke Display Heading -->
+          <h1 class="hero-el serif text-5xl sm:text-7xl md:text-8xl font-medium tracking-tight text-white mb-3">
+            <span class="block">NOAH VANCE</span>
+            <span class="block stroke-text-white text-4xl sm:text-6xl md:text-7xl font-normal mt-1 opacity-90 text-ghost-hover cursor-pointer" title="Hover to illuminate">
+              DESIGN SYSTEM
+            </span>
+          </h1>
+
+          <!-- Subtitle -->
+          <p class="hero-el text-xs sm:text-sm tracking-[0.45em] text-slate-300 max-w-2xl mx-auto mt-4 uppercase">
+            A C A N O N I C A L &nbsp; P A T T E R N &nbsp; L I B R A R Y &nbsp; F O R &nbsp; 3 D &nbsp; &amp; &nbsp; W E B
+          </p>
+
+          <!-- Interactive Action Buttons -->
+          <div class="hero-el flex flex-wrap items-center justify-center gap-4 mt-8">
+            <a
+              href="#components"
+              id="hero-magnetic-btn"
+              class="group relative inline-flex items-center gap-3 px-8 py-4 rounded-md border border-orange-300/50 text-xs tracking-[0.3em] text-orange-100 font-semibold overflow-hidden transition-all duration-300 hover:text-[#050a1c] shadow-[0_0_30px_rgba(253,186,116,0.2)]"
+            >
+              <span class="absolute inset-0 bg-gradient-to-r from-orange-300 to-amber-200 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+              <span class="relative z-10">EXPLORE COMPONENTS</span>
+              <i data-lucide="arrow-right" class="relative z-10 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+            </a>
+
+            <a
+              href="#typography"
+              class="inline-flex items-center gap-3 px-7 py-4 rounded-md border border-white/15 bg-white/[0.03] text-xs tracking-[0.3em] text-slate-200 font-medium hover:bg-white/[0.08] hover:border-white/30 transition-all duration-300 backdrop-blur-md"
+            >
+              <span>TYPOGRAPHY SPECS</span>
+              <i data-lucide="type" class="w-4 h-4 text-slate-400"></i>
+            </a>
+          </div>
+
+          <!-- Live Spec Metrics Strip (Pills) -->
+          <div class="hero-el grid grid-cols-2 sm:grid-cols-4 gap-3 mt-12 max-w-3xl mx-auto">
+            <div class="glass-panel-subtle p-3 rounded-lg flex flex-col items-center">
+              <span class="text-xs font-mono text-orange-300 font-semibold">120+</span>
+              <span class="text-[10px] tracking-[0.2em] text-slate-400 uppercase mt-0.5">Design Tokens</span>
+            </div>
+            <div class="glass-panel-subtle p-3 rounded-lg flex flex-col items-center">
+              <span class="text-xs font-mono text-cyan-300 font-semibold">WebGL 2.0</span>
+              <span class="text-[10px] tracking-[0.2em] text-slate-400 uppercase mt-0.5">Shader Driven</span>
+            </div>
+            <div class="glass-panel-subtle p-3 rounded-lg flex flex-col items-center">
+              <span class="text-xs font-mono text-teal-300 font-semibold">GSAP 3.12</span>
+              <span class="text-[10px] tracking-[0.2em] text-slate-400 uppercase mt-0.5">Motion Physics</span>
+            </div>
+            <div class="glass-panel-subtle p-3 rounded-lg flex flex-col items-center">
+              <span class="text-xs font-mono text-white font-semibold">AAA Spec</span>
+              <span class="text-[10px] tracking-[0.2em] text-slate-400 uppercase mt-0.5">WCAG Compliant</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll Down Cue -->
+        <div class="hero-el absolute bottom-6 flex flex-col items-center gap-2 text-slate-500 z-10">
+          <span class="text-[10px] tracking-[0.35em] uppercase">SCROLL TO INSPECT</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-orange-300/80 animate-bounce"></i>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 1. TYPOGRAPHY SYSTEM (TIPOGRAFIA & TRANSPARENT LETTERING)     -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <section id="typography" class="relative py-28 px-6 border-t border-white/10">
+        <!-- Section Ambient Background Watermark -->
+        <div class="absolute right-0 top-12 pointer-events-none select-none opacity-5 overflow-hidden">
+          <span class="serif text-[16vw] font-bold text-watermark">TYPO</span>
+        </div>
+
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Header Card -->
+          <div class="ds-section-divider">
+            <div class="flex items-center gap-3 text-xs tracking-[0.4em] text-orange-300 font-medium mb-3">
+              <i data-lucide="type" class="w-4 h-4"></i>
+              <span>SECTION 01</span>
+            </div>
+            <h2 class="serif text-4xl sm:text-5xl font-medium tracking-tight text-white mb-4">
+              Typography &amp; Lettering Architecture
+            </h2>
+            <p class="text-sm text-slate-400 max-w-3xl leading-relaxed">
+              A bespoke pairing strategy contrasting editorial classical serif warmth (<code class="text-orange-200">Playfair Display</code>) with ultra-precise geometric sans readability (<code class="text-cyan-200">Inter</code>) and developer-grade monospace telemetry (<code class="text-teal-200">JetBrains Mono</code>). Includes specialized transparent outline strokes and luminous white treatments.
+            </p>
+          </div>
+
+          <!-- ── Feature Showcase: Transparent Lettering & Outline Variants ── -->
+          <div class="mb-16">
+            <h3 class="text-xs font-semibold tracking-[0.3em] uppercase text-slate-400 mb-6 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+              Signature Transparent &amp; White Lettering Models
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <!-- Variant 1: Pure White Stroke -->
+              <div class="flash-card glass-panel p-6 rounded-2xl flex flex-col justify-between min-h-[14rem]">
+                <div class="flex items-center justify-between text-xs text-slate-400 spec-tag mb-4">
+                  <span>01 // PURE STROKE</span>
+                  <span class="text-orange-300">1.5px White</span>
+                </div>
+                <div class="my-auto py-2">
+                  <p class="serif text-4xl font-normal stroke-text-white tracking-wide">AURELIA</p>
+                  <p class="text-xs tracking-[0.3em] text-slate-400 mt-2">TRANSPARENT CORE</p>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 border-t border-white/5 pt-3">
+                  -webkit-text-stroke: 1.5px #fff
+                </div>
+              </div>
+
+              <!-- Variant 2: Gradient Text Shimmer -->
+              <div class="flash-card glass-panel p-6 rounded-2xl flex flex-col justify-between min-h-[14rem]">
+                <div class="flex items-center justify-between text-xs text-slate-400 spec-tag mb-4">
+                  <span>02 // SHIMMER CLIP</span>
+                  <span class="text-cyan-300">Fluid Gradient</span>
+                </div>
+                <div class="my-auto py-2">
+                  <p class="serif text-4xl font-medium text-gradient-shimmer tracking-tight">LIMITLESS</p>
+                  <p class="text-xs tracking-[0.3em] text-slate-400 mt-2">LUMINOUS FLUID</p>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 border-t border-white/5 pt-3">
+                  background-clip: text (white→gold)
+                </div>
+              </div>
+
+              <!-- Variant 3: Interactive Ghost Fill -->
+              <div class="flash-card glass-panel p-6 rounded-2xl flex flex-col justify-between min-h-[14rem] group">
+                <div class="flex items-center justify-between text-xs text-slate-400 spec-tag mb-4">
+                  <span>03 // GHOST ILLUMINATION</span>
+                  <span class="text-teal-300">Hover React</span>
+                </div>
+                <div class="my-auto py-2">
+                  <p class="serif text-4xl font-normal text-ghost-hover tracking-wide cursor-pointer">HORIZON</p>
+                  <p class="text-xs tracking-[0.3em] text-slate-400 mt-2">HOVER TO FILL WHITE</p>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 border-t border-white/5 pt-3">
+                  transition: stroke → solid + glow
+                </div>
+              </div>
+
+              <!-- Variant 4: Ultra-Spaced Overline Lettering -->
+              <div class="flash-card glass-panel p-6 rounded-2xl flex flex-col justify-between min-h-[14rem]">
+                <div class="flex items-center justify-between text-xs text-slate-400 spec-tag mb-4">
+                  <span>04 // MONOSPACE OVERLINE</span>
+                  <span class="text-orange-300">Tracking 0.6em</span>
+                </div>
+                <div class="my-auto py-2">
+                  <p class="text-xs tracking-[0.6em] text-orange-200/90 font-medium uppercase leading-relaxed">
+                    G E N E R A T I V E
+                  </p>
+                  <p class="serif text-2xl text-white font-medium mt-2">Noah Vance Art</p>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 border-t border-white/5 pt-3">
+                  letter-spacing: 0.6em; text-transform: uppercase
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Font Family Matrix Cards ── -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            <!-- Serif Stack -->
+            <div class="flash-card glass-panel p-6 rounded-2xl border border-white/10">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-semibold tracking-[0.2em] text-orange-300 uppercase">Primary Display Serif</span>
+                <span class="spec-tag px-2 py-0.5 rounded bg-orange-400/10 text-orange-200 border border-orange-400/20">Headings &amp; Title</span>
+              </div>
+              <p class="serif text-4xl text-white font-medium mb-3">Playfair Display</p>
+              <p class="serif italic text-2xl text-slate-300 mb-4">The poetry of generative geometry.</p>
+              <div class="space-y-1.5 text-xs text-slate-400 font-mono border-t border-white/5 pt-4">
+                <p><span class="text-slate-500">Weights:</span> 400 (Regular), 500 (Medium), 600 (Semibold), 700 (Bold)</p>
+                <p><span class="text-slate-500">Fallback:</span> Georgia, 'Times New Roman', serif</p>
+                <p><span class="text-slate-500">Loading:</span> Google CDN + Local Preload, swap display</p>
+              </div>
+            </div>
+
+            <!-- Sans-Serif Stack -->
+            <div class="flash-card glass-panel p-6 rounded-2xl border border-white/10">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-semibold tracking-[0.2em] text-cyan-300 uppercase">Primary Interface Sans</span>
+                <span class="spec-tag px-2 py-0.5 rounded bg-cyan-400/10 text-cyan-200 border border-cyan-400/20">UI &amp; Body Text</span>
+              </div>
+              <p class="text-4xl text-white font-semibold mb-3">Inter</p>
+              <p class="text-base text-slate-300 mb-4 leading-relaxed">Crisp pixel-aligned micro geometry for complex digital interfaces.</p>
+              <div class="space-y-1.5 text-xs text-slate-400 font-mono border-t border-white/5 pt-4">
+                <p><span class="text-slate-500">Weights:</span> 200 (Light), 400 (Regular), 500 (Medium), 600 (Semibold), 700 (Bold)</p>
+                <p><span class="text-slate-500">Fallback:</span> ui-sans-serif, system-ui, -apple-system, sans-serif</p>
+                <p><span class="text-slate-500">Features:</span> cv02, cv03, cv04 (disambiguation glyphs)</p>
+              </div>
+            </div>
+
+            <!-- Monospace Stack -->
+            <div class="flash-card glass-panel p-6 rounded-2xl border border-white/10">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-semibold tracking-[0.2em] text-teal-300 uppercase">Technical Monospace</span>
+                <span class="spec-tag px-2 py-0.5 rounded bg-teal-400/10 text-teal-200 border border-teal-400/20">Tokens &amp; Code</span>
+              </div>
+              <p class="font-mono text-3xl text-white font-medium mb-3">JetBrains Mono</p>
+              <p class="font-mono text-sm text-slate-300 mb-4">0x7F // float proximity = 0.942;</p>
+              <div class="space-y-1.5 text-xs text-slate-400 font-mono border-t border-white/5 pt-4">
+                <p><span class="text-slate-500">Weights:</span> 400 (Regular), 500 (Medium), 600 (Semibold)</p>
+                <p><span class="text-slate-500">Fallback:</span> SFMono-Regular, Menlo, Monaco, Consolas, monospace</p>
+                <p><span class="text-slate-500">Use:</span> Token badges, line counts, technical specifications</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Complete Type Scale Hierarchy Table with Live Examples ── -->
+          <div class="glass-panel rounded-2xl overflow-hidden border border-white/10 mb-12">
+            <div class="px-6 py-4 border-b border-white/10 bg-white/[0.02] flex items-center justify-between">
+              <h3 class="text-xs font-semibold tracking-[0.25em] uppercase text-white">
+                Full Type Scale Specification Matrix
+              </h3>
+              <span class="spec-tag text-slate-400">9 Core Typographic Roles</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-white/10 text-[11px] font-mono tracking-wider text-slate-400 bg-white/[0.01]">
+                    <th class="p-4">ROLE / TAG</th>
+                    <th class="p-4">SAMPLE RENDER</th>
+                    <th class="p-4">FONT FAMILY</th>
+                    <th class="p-4">WEIGHT</th>
+                    <th class="p-4">SIZE / LINE-HEIGHT</th>
+                    <th class="p-4">TRACKING</th>
+                    <th class="p-4">TRANSFORM</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5 text-xs">
+                  <!-- H1 Display -->
+                  <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="p-4 font-mono text-orange-300 font-medium">Display Hero (h1)</td>
+                    <td class="p-4">
+                      <span class="serif text-3xl md:text-4xl text-white font-medium">Noah Vance Art</span>
+                    </td>
+                    <td class="p-4 font-mono text-slate-300">Playfair Display</td>
+                    <td class="p-4 font-mono text-slate-400">500 (Med)</td>
+                    <td class="p-4 font-mono text-slate-300">72px / 1.05</td>
+                    <td class="p-4 font-mono text-slate-400">-0.025em</td>
+                    <td class="p-4 font-mono text-slate-400">None</td>
+                  </tr>
+
+                  <!-- H2 Section -->
+                  <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="p-4 font-mono text-orange-300 font-medium">Section Title (h2)</td>
+                    <td class="p-4">
+                      <span class="serif text-2xl md:text-3xl text-white font-medium">Limitless Form: 3D Frontier</span>
+                    </td>
+                    <td class="p-4 font-mono text-slate-300">Playfair Display</td>
+                    <td class="p-4 font-mono text-slate-400">500 (Med)</td>
+                    <td class="p-4 font-mono text-slate-300">48px / 1.15</td>
+                    <td class="p-4 font-mono text-slate-400">-0.02em</td>
+                    <td class="p-4 font-mono text-slate-400">None</td>
+                  </tr>
+
+                  <!-- H3 Feature -->
+                  <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="p-4 font-mono text-orange-300 font-medium">Feature Title (h3)</td>
+                    <td class="p-4">
+                      <span class="serif text-xl md:text-2xl text-white font-medium italic">Echoes Without Horizon</span>
+                    </td>
+                    <td class="p-4 font-mono text-slate-300">Playfair Display</td>
+                    <td class="p-4 font-mono text-slate-400">500 (Italic)</td>
+                    <td class="p-4 font-mono text-slate-300">32px / 1.25</td>
+                    <td class="p-4 font-mono text-slate-400">-0.015em</td>
+                    <td class="p-4 font-mono text-slate-400">None</td>
+                  </tr>
+
+                  <!-- H4 Subheading -->
+                  <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="p-4 font-mono text-cyan-300 font-medium">Subhead (h4)</td>
+                    <td class="p-4">
+                      <span class="text-lg text-white font-semibold">Interactive Spatial Rhythms</span>
+                    </td>
+                    <td class="p-4 font-mono text-slate-300">Inter</td>
+                    <td class="p-4 font-mono text-slate-400">600 (Semi)</td>
+                    <td class="p-4 font-mono text-slate-300">24px / 1.35</td>
+                    <td class="p-4 font-mono text-slate-400">-0.01em</td>
+                    <td class="p-4 font-mono text-slate-400">None</td>
+                  </tr>
+
+                  <!-- H5 Card Title -->
+                  <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="p-4 font-mono text-cyan-300 font-medium">Card Title (h5)</td>
+                    <td class="p-4">
+                      <span class="text-sm font-semibold text-white tracking-[0.2em]">ATELIER 89 &nbsp;·&nbsp; VOL.01</span>
+                    </td>
+                    <td class="p-4 font-mono text-slate-300">Inter</td>
+                    <td class="p-4 font-mono text-slate-400">600 (Semi)</td>
+                    <td class="p-4 font-mono text-slate-300">18px / 1.4</td>
+                    <td class="p-4 font-mono text-slate-400">0.2em</td>
+                    <td class="p-4 font-mono text-slate-400">Uppercase</td>
+                  </tr>
+
+                  <!-- Eyebrow / Overline -->
+                  <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="p-4 font-mono text-teal-300 font-medium">Eyebrow / Overline</td>
+                    <td class="p-4">
+                      <span class="text-xs tracking-[0.5em] text-orange-300/80 font-medium uppercase">P O R T F O L I O</span>
+                    </td>
+                    <td class="p-4 font-mono text-slate-300">Inter</td>
+                    <td class="p-4 font-mono text-slate-400">500 (Med)</td>
+                    <td class="p-4 font-mono text-slate-300">11px / 1.2</td>
+                    <td class="p-4 font-mono text-slate-400">0.5em</td>
+                    <td class="p-4 font-mono text-slate-400">Uppercase</td>
+                  </tr>
+
+                  <!-- Body Large -->
+                  <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="p-4 font-mono text-slate-300 font-medium">Body Large (body-lg)</td>
+                    <td class="p-4">
+                      <span class="text-base text-slate-200 font-light leading-relaxed">Every render begins as a question about light, depth, and generative geometry.</span>
+                    </td>
+                    <td class="p-4 font-mono text-slate-300">Inter</td>
+                    <td class="p-4 font-mono text-slate-400">300 (Light)</td>
+                    <td class="p-4 font-mono text-slate-300">18px / 1.7</td>
+                    <td class="p-4 font-mono text-slate-400">0em</td>
+                    <td class="p-4 font-mono text-slate-400">None</td>
+                  </tr>
+
+                  <!-- Body Regular -->
+                  <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="p-4 font-mono text-slate-300 font-medium">Body Regular (body)</td>
+                    <td class="p-4">
+                      <span class="text-sm text-slate-300 font-normal leading-relaxed">Through procedural systems and hand-tuned shaders, static objects become living sculptures.</span>
+                    </td>
+                    <td class="p-4 font-mono text-slate-300">Inter</td>
+                    <td class="p-4 font-mono text-slate-400">400 (Reg)</td>
+                    <td class="p-4 font-mono text-slate-300">15px / 1.65</td>
+                    <td class="p-4 font-mono text-slate-400">0.01em</td>
+                    <td class="p-4 font-mono text-slate-400">None</td>
+                  </tr>
+
+                  <!-- Caption / Helper -->
+                  <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="p-4 font-mono text-slate-300 font-medium">Caption &amp; Footnote</td>
+                    <td class="p-4">
+                      <span class="text-xs tracking-[0.2em] text-slate-500 uppercase">© 2025 · NOAH VANCE · ALL RIGHTS RESERVED</span>
+                    </td>
+                    <td class="p-4 font-mono text-slate-300">Inter</td>
+                    <td class="p-4 font-mono text-slate-400">400 (Reg)</td>
+                    <td class="p-4 font-mono text-slate-300">11px / 1.4</td>
+                    <td class="p-4 font-mono text-slate-400">0.2em</td>
+                    <td class="p-4 font-mono text-slate-400">Uppercase</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── Interactive Live Typography Sandbox ── -->
+          <div class="glass-panel p-6 rounded-2xl border border-white/10">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-white/10">
+              <div>
+                <h4 class="text-sm font-medium text-white">Interactive Typography Sandbox</h4>
+                <p class="text-xs text-slate-400">Type in real time to preview tracking, stroke, and font scale rendering.</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <button
+                  id="sandbox-stroke-toggle"
+                  class="px-3 py-1.5 rounded-lg border border-white/15 text-xs font-mono text-slate-300 hover:text-white hover:border-orange-300 transition-colors"
+                >
+                  Toggle Stroke Mode
+                </button>
+                <button
+                  id="sandbox-font-toggle"
+                  class="px-3 py-1.5 rounded-lg border border-white/15 text-xs font-mono text-slate-300 hover:text-white hover:border-cyan-300 transition-colors"
+                >
+                  Toggle Serif / Sans
+                </button>
+              </div>
+            </div>
+            <div
+              id="sandbox-output"
+              contenteditable="true"
+              class="serif text-4xl sm:text-5xl text-white outline-none min-h-[5rem] p-4 rounded-xl bg-white/[0.02] border border-white/5 focus:border-orange-400/50 transition-all"
+            >
+              The architecture of light dissolves into pure sensation.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 2. COLOR SYSTEM & SURFACES (HEX, RGB, HSL, OPACITIES, AAA)    -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <section id="colors" class="relative py-28 px-6 border-t border-white/10">
+        <!-- Section Ambient Watermark -->
+        <div class="absolute left-0 top-12 pointer-events-none select-none opacity-5 overflow-hidden">
+          <span class="serif text-[16vw] font-bold text-watermark">COLOR</span>
+        </div>
+
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Header -->
+          <div class="ds-section-divider">
+            <div class="flex items-center gap-3 text-xs tracking-[0.4em] text-orange-300 font-medium mb-3">
+              <i data-lucide="palette" class="w-4 h-4"></i>
+              <span>SECTION 02</span>
+            </div>
+            <h2 class="serif text-4xl sm:text-5xl font-medium tracking-tight text-white mb-4">
+              Color Palette &amp; Surface Spectrum
+            </h2>
+            <p class="text-sm text-slate-400 max-w-3xl leading-relaxed">
+              Every token is calibrated for astronomical contrast on pitch-dark canvas planes (<code class="text-orange-200">#050a1c</code>). Accents harness warm solar oranges, electric cyan lasers, and luminous neutral whites with precision alpha variants.
+            </p>
+          </div>
+
+          <!-- ── Primary Color Palettes ── -->
+          <div class="space-y-12 mb-16">
+            <!-- 1. Cosmic Void & Dark Surfaces -->
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xs font-semibold tracking-[0.25em] uppercase text-slate-300 flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                  Cosmic Dark &amp; Surface Neutrals
+                </h3>
+                <span class="spec-tag text-slate-500">Role: Base Canvas &amp; Card Backgrounds</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Color 1 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#050a1c] border border-white/15 mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-white/70">Canvas Void</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Void Base</p>
+                  <p class="text-xs font-mono text-orange-300 mt-1">#050a1c</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (5, 10, 28)</p>
+                    <p>HSL: 227°, 70%, 6%</p>
+                    <p class="text-slate-500">Role: Canvas background</p>
+                  </div>
+                </div>
+
+                <!-- Color 2 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#0a1128] border border-white/15 mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-white/70">Surface Card</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Card Base</p>
+                  <p class="text-xs font-mono text-orange-300 mt-1">#0a1128</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (10, 17, 40)</p>
+                    <p>HSL: 226°, 60%, 10%</p>
+                    <p class="text-slate-500">Role: Primary card fill</p>
+                  </div>
+                </div>
+
+                <!-- Color 3 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#0f1738] border border-white/15 mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-white/70">Elevated</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Elevated Void</p>
+                  <p class="text-xs font-mono text-orange-300 mt-1">#0f1738</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (15, 23, 56)</p>
+                    <p>HSL: 228°, 58%, 14%</p>
+                    <p class="text-slate-500">Role: Hover &amp; dialog fill</p>
+                  </div>
+                </div>
+
+                <!-- Color 4 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#1e293b] border border-white/15 mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-white/70">Slate 800</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Slate Neutral</p>
+                  <p class="text-xs font-mono text-orange-300 mt-1">#1e293b</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (30, 41, 59)</p>
+                    <p>HSL: 217°, 33%, 17%</p>
+                    <p class="text-slate-500">Role: Input backgrounds</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Signature Generative Solar Accents -->
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xs font-semibold tracking-[0.25em] uppercase text-slate-300 flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+                  Generative Amber &amp; Solar Accents
+                </h3>
+                <span class="spec-tag text-slate-500">Role: Primary Brand Highlights &amp; Conic Light</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Amber 1 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#fdba74] shadow-[0_0_25px_rgba(253,186,116,0.5)] mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-slate-950 font-bold">Orange 300</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Solar Gold (Primary)</p>
+                  <p class="text-xs font-mono text-orange-300 mt-1">#fdba74</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (253, 186, 116)</p>
+                    <p>HSL: 31°, 97%, 72%</p>
+                    <p class="text-slate-500">Role: Conic light, primary accent</p>
+                  </div>
+                </div>
+
+                <!-- Amber 2 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#fed7aa] mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-slate-950 font-bold">Orange 200</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Solar Light</p>
+                  <p class="text-xs font-mono text-orange-300 mt-1">#fed7aa</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (254, 215, 170)</p>
+                    <p>HSL: 32°, 98%, 83%</p>
+                    <p class="text-slate-500">Role: Text highlight &amp; badges</p>
+                  </div>
+                </div>
+
+                <!-- Amber 3 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#fb923c] mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-white font-bold">Orange 400</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Solar Deep</p>
+                  <p class="text-xs font-mono text-orange-300 mt-1">#fb923c</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (251, 146, 60)</p>
+                    <p>HSL: 27°, 96%, 61%</p>
+                    <p class="text-slate-500">Role: Selection &amp; button hover</p>
+                  </div>
+                </div>
+
+                <!-- Amber 4 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#ea580c] mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-white font-bold">Orange 600</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Solar Crimson</p>
+                  <p class="text-xs font-mono text-orange-300 mt-1">#ea580c</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (234, 88, 12)</p>
+                    <p>HSL: 21°, 90%, 48%</p>
+                    <p class="text-slate-500">Role: Active clicks &amp; deep glow</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Cosmic Cyan, Teal & Secondary Accents -->
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xs font-semibold tracking-[0.25em] uppercase text-slate-300 flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                  Cosmic Cyan, Blue &amp; Teal Accents
+                </h3>
+                <span class="spec-tag text-slate-500">Role: Lasers, Shaders &amp; Status Feedback</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Cyan 1 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#67e8f9] shadow-[0_0_25px_rgba(103,232,249,0.5)] mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-slate-950 font-bold">Cyan 300</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Laser Cyan</p>
+                  <p class="text-xs font-mono text-cyan-300 mt-1">#67e8f9</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (103, 232, 249)</p>
+                    <p>HSL: 187°, 92%, 69%</p>
+                    <p class="text-slate-500">Role: Vertical optical laser</p>
+                  </div>
+                </div>
+
+                <!-- Blue 2 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#60a5fa] mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-slate-950 font-bold">Blue 400</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Atmosphere Blue</p>
+                  <p class="text-xs font-mono text-cyan-300 mt-1">#60a5fa</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (96, 165, 250)</p>
+                    <p>HSL: 213°, 94%, 68%</p>
+                    <p class="text-slate-500">Role: Background mesh glow</p>
+                  </div>
+                </div>
+
+                <!-- Teal 3 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#5eead4] mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-slate-950 font-bold">Teal 300</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Odyssey Teal</p>
+                  <p class="text-xs font-mono text-cyan-300 mt-1">#5eead4</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (94, 234, 212)</p>
+                    <p>HSL: 171°, 77%, 64%</p>
+                    <p class="text-slate-500">Role: Project feature tags</p>
+                  </div>
+                </div>
+
+                <!-- Emerald 4 -->
+                <div class="flash-card glass-panel p-4 rounded-xl border border-white/10">
+                  <div class="h-20 rounded-lg bg-[#34d399] mb-3 flex items-end p-2">
+                    <span class="text-[10px] font-mono text-slate-950 font-bold">Emerald 400</span>
+                  </div>
+                  <p class="text-sm font-semibold text-white">Success Feedback</p>
+                  <p class="text-xs font-mono text-emerald-300 mt-1">#34d399</p>
+                  <div class="text-[11px] font-mono text-slate-400 space-y-0.5 mt-2 border-t border-white/5 pt-2">
+                    <p>RGB: (52, 211, 153)</p>
+                    <p>HSL: 158°, 64%, 52%</p>
+                    <p class="text-slate-500">Role: Success state &amp; valid badge</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Opacity & Glassmorphism Spec Matrix ── -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+            <!-- White Opacities -->
+            <div class="glass-panel p-6 rounded-2xl border border-white/10">
+              <h4 class="text-xs font-semibold tracking-[0.2em] uppercase text-white mb-4">
+                White Opacity Scale on Void Canvas
+              </h4>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 rounded-lg bg-white/10 border border-white/20">
+                  <span class="text-xs font-medium text-white">bg-white/10 &nbsp;·&nbsp; Primary Button / Active Tab</span>
+                  <span class="font-mono text-xs text-slate-400">10% (0.10)</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-lg bg-white/[0.05] border border-white/10">
+                  <span class="text-xs font-medium text-white">bg-white/[0.05] &nbsp;·&nbsp; Card Background Surface</span>
+                  <span class="font-mono text-xs text-slate-400">5% (0.05)</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-lg bg-white/[0.03] border border-white/5">
+                  <span class="text-xs font-medium text-slate-300">bg-white/[0.03] &nbsp;·&nbsp; Subtle Section Plane</span>
+                  <span class="font-mono text-xs text-slate-400">3% (0.03)</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-lg border border-white/10">
+                  <span class="text-xs font-medium text-slate-400">border-white/10 &nbsp;·&nbsp; Standard Glass Border</span>
+                  <span class="font-mono text-xs text-slate-400">10% Stroke</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- WCAG Contrast Matrix -->
+            <div class="glass-panel p-6 rounded-2xl border border-white/10">
+              <h4 class="text-xs font-semibold tracking-[0.2em] uppercase text-white mb-4">
+                WCAG 2.1 Accessibility &amp; Contrast Audit
+              </h4>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-white"></span>
+                    <span class="text-xs text-white">White #ffffff on #050a1c</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-xs text-slate-300">18.4:1 Ratio</span>
+                    <span class="spec-tag px-2 py-0.5 rounded bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">AAA PASS</span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#fdba74]"></span>
+                    <span class="text-xs text-white">Orange #fdba74 on #050a1c</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-xs text-slate-300">11.8:1 Ratio</span>
+                    <span class="spec-tag px-2 py-0.5 rounded bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">AAA PASS</span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#67e8f9]"></span>
+                    <span class="text-xs text-white">Cyan #67e8f9 on #050a1c</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-xs text-slate-300">14.2:1 Ratio</span>
+                    <span class="spec-tag px-2 py-0.5 rounded bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">AAA PASS</span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-lg bg-white/[0.02] border border-white/5">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#94a3b8]"></span>
+                    <span class="text-xs text-white">Slate #94a3b8 on #050a1c</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-xs text-slate-300">7.6:1 Ratio</span>
+                    <span class="spec-tag px-2 py-0.5 rounded bg-blue-400/20 text-blue-300 border border-blue-400/30">AA PASS</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 3. UI COMPONENTS SPECIFICATION (LIVE INTERACTIVE ENGINE)     -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <section id="components" class="relative py-28 px-6 border-t border-white/10">
+        <!-- Section Ambient Background Watermark -->
+        <div class="absolute right-0 top-12 pointer-events-none select-none opacity-5 overflow-hidden">
+          <span class="serif text-[16vw] font-bold text-watermark">UI</span>
+        </div>
+
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Header -->
+          <div class="ds-section-divider">
+            <div class="flex items-center gap-3 text-xs tracking-[0.4em] text-orange-300 font-medium mb-3">
+              <i data-lucide="layers" class="w-4 h-4"></i>
+              <span>SECTION 03</span>
+            </div>
+            <h2 class="serif text-4xl sm:text-5xl font-medium tracking-tight text-white mb-4">
+              UI Components &amp; Interactive Specs
+            </h2>
+            <p class="text-sm text-slate-400 max-w-3xl leading-relaxed">
+              Every component features live mouse-reactive physics, conic gradient tracking, micro-animations, and full accessible states.
+            </p>
+          </div>
+
+          <!-- ── SUB-SECTION: BUTTONS ── -->
+          <div class="mb-20">
+            <div class="flex items-center justify-between mb-6 pb-2 border-b border-white/5">
+              <h3 class="text-xs font-semibold tracking-[0.25em] uppercase text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+                1. Button Architecture &amp; Motion Physics
+              </h3>
+              <span class="spec-tag text-slate-500">6 Functional Variants</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Button 1: Magnetic Fill CTA -->
+              <div class="flash-card glass-panel p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                  <span class="text-xs font-semibold text-orange-300 tracking-[0.2em] block mb-1">MAGNETIC CTA</span>
+                  <p class="text-xs text-slate-400 mb-6">Spring attraction to cursor with sliding gold sweep.</p>
+                </div>
+                <div class="py-4 flex justify-center">
+                  <a
+                    href="#contact"
+                    class="btn-magnetic group relative inline-flex items-center gap-3 px-8 py-4 rounded-md border border-orange-300/50 text-xs tracking-[0.3em] text-orange-100 font-semibold overflow-hidden transition-all duration-300 hover:text-[#050a1c]"
+                  >
+                    <span class="absolute inset-0 bg-gradient-to-r from-orange-300 to-amber-200 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></span>
+                    <span class="relative z-10">GET IN TOUCH</span>
+                    <i data-lucide="arrow-right" class="relative z-10 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+                  </a>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 border-t border-white/5 pt-3">
+                  Class: <code class="text-orange-200">.btn-magnetic</code> · GSAP mousemove pull
+                </div>
+              </div>
+
+              <!-- Button 2: Conic Flashlight Button -->
+              <div class="flash-card glass-panel p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                  <span class="text-xs font-semibold text-cyan-300 tracking-[0.2em] block mb-1">CONIC FLASHLIGHT BUTTON</span>
+                  <p class="text-xs text-slate-400 mb-6">Real-time dynamic cursor angle border follower.</p>
+                </div>
+                <div class="py-4 flex justify-center">
+                  <button class="flash-card px-7 py-4 rounded-lg bg-[#0a1128] text-xs font-medium tracking-[0.25em] text-white border border-white/10 hover:border-transparent transition-all">
+                    <span>EXPLORE ARCHIVE</span>
+                  </button>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 border-t border-white/5 pt-3">
+                  Class: <code class="text-cyan-200">.flash-card</code> · --cursor-angle calculation
+                </div>
+              </div>
+
+              <!-- Button 3: Monogram 360 Spin -->
+              <div class="flash-card glass-panel p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                  <span class="text-xs font-semibold text-teal-300 tracking-[0.2em] block mb-1">MONOGRAM 360 SPIN</span>
+                  <p class="text-xs text-slate-400 mb-6">Icon circle with 360-degree smooth rotation.</p>
+                </div>
+                <div class="py-4 flex justify-center items-center gap-4">
+                  <button class="group flex items-center justify-center w-12 h-12 rounded-full border border-white/15 hover:border-orange-400/60 transition-all duration-500 hover:rotate-[360deg] bg-white/[0.03]">
+                    <span class="serif text-lg font-semibold text-white">N</span>
+                  </button>
+                  <button class="group flex items-center justify-center w-12 h-12 rounded-full border border-white/15 hover:border-cyan-400/60 transition-all duration-500 hover:rotate-[360deg] bg-white/[0.03]">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-cyan-300"></i>
+                  </button>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 border-t border-white/5 pt-3">
+                  Class: <code class="text-teal-200">hover:rotate-[360deg]</code> · duration-500
+                </div>
+              </div>
+
+              <!-- Button 4: Solid White Pill -->
+              <div class="flash-card glass-panel p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                  <span class="text-xs font-semibold text-white tracking-[0.2em] block mb-1">SOLID WHITE PILL</span>
+                  <p class="text-xs text-slate-400 mb-6">High contrast primary CTA with hover orange sweep.</p>
+                </div>
+                <div class="py-4 flex justify-center">
+                  <button class="px-7 py-3.5 rounded-full bg-white text-[#050a1c] text-xs tracking-[0.25em] font-semibold hover:bg-orange-200 transition-colors duration-300 shadow-[0_0_25px_rgba(255,255,255,0.2)]">
+                    START PROJECT
+                  </button>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 border-t border-white/5 pt-3">
+                  Class: <code class="text-white">bg-white text-[#050a1c]</code>
+                </div>
+              </div>
+
+              <!-- Button 5: Glass Outline Button -->
+              <div class="flash-card glass-panel p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                  <span class="text-xs font-semibold text-slate-300 tracking-[0.2em] block mb-1">GLASS OUTLINE BUTTON</span>
+                  <p class="text-xs text-slate-400 mb-6">Subtle glass surface with border orange glow.</p>
+                </div>
+                <div class="py-4 flex justify-center">
+                  <button class="px-6 py-3.5 rounded-md border border-white/15 text-xs tracking-[0.25em] text-slate-200 font-medium hover:border-orange-300/60 hover:text-orange-200 transition-all duration-300">
+                    READ SPECIFICATION
+                  </button>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 border-t border-white/5 pt-3">
+                  Class: <code class="text-slate-300">border-white/15 hover:border-orange-300</code>
+                </div>
+              </div>
+
+              <!-- Button 6: Disabled & Loading States -->
+              <div class="flash-card glass-panel p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                  <span class="text-xs font-semibold text-rose-300 tracking-[0.2em] block mb-1">DISABLED &amp; LOADING</span>
+                  <p class="text-xs text-slate-400 mb-6">Accessible states with spinner telemetry.</p>
+                </div>
+                <div class="py-4 flex justify-center items-center gap-3">
+                  <button disabled class="px-5 py-3 rounded-md border border-white/5 bg-white/[0.02] text-xs tracking-[0.2em] text-slate-600 cursor-not-allowed">
+                    DISABLED
+                  </button>
+                  <button class="px-5 py-3 rounded-md border border-orange-400/30 bg-orange-400/10 text-xs tracking-[0.2em] text-orange-300 flex items-center gap-2">
+                    <span class="w-3 h-3 border-2 border-orange-300 border-t-transparent rounded-full animate-spin"></span>
+                    <span>SAVING...</span>
+                  </button>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 border-t border-white/5 pt-3">
+                  Attribute: <code class="text-rose-200">disabled</code> · animate-spin
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── SUB-SECTION: INPUTS & FORM CONTROLS ── -->
+          <div class="mb-20">
+            <div class="flex items-center justify-between mb-6 pb-2 border-b border-white/5">
+              <h3 class="text-xs font-semibold tracking-[0.25em] uppercase text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                2. Form Controls, Inputs &amp; Focus Telemetry
+              </h3>
+              <span class="spec-tag text-slate-500">Live Interactive Form</span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <!-- Live Form Panel -->
+              <div class="lg:col-span-2 glass-panel p-8 rounded-2xl border border-white/10">
+                <form onsubmit="event.preventDefault(); alert('Form demonstrated successfully!');" class="space-y-6">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Text Input -->
+                    <div>
+                      <label class="block text-xs font-medium tracking-[0.2em] text-slate-300 uppercase mb-2">
+                        Creator Name
+                      </label>
+                      <div class="relative">
+                        <input
+                          type="text"
+                          placeholder="e.g. Noah Vance"
+                          class="w-full rounded-lg bg-white/[0.03] border border-white/10 px-4 py-3.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-orange-300/60 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(253,186,116,0.15)] transition-all duration-300"
+                        />
+                        <i data-lucide="user" class="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                      </div>
+                    </div>
+
+                    <!-- Email Input -->
+                    <div>
+                      <label class="block text-xs font-medium tracking-[0.2em] text-slate-300 uppercase mb-2">
+                        Email Address
+                      </label>
+                      <div class="relative">
+                        <input
+                          type="email"
+                          placeholder="studio@noahvance.art"
+                          class="w-full rounded-lg bg-white/[0.03] border border-white/10 px-4 py-3.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-orange-300/60 focus:bg-white/[0.05] focus:shadow-[0_0_20px_rgba(253,186,116,0.15)] transition-all duration-300"
+                        />
+                        <i data-lucide="mail" class="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Select Dropdown -->
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label class="block text-xs font-medium tracking-[0.2em] text-slate-300 uppercase mb-2">
+                        Project Tier
+                      </label>
+                      <select
+                        class="w-full rounded-lg bg-[#0a1128] border border-white/10 px-4 py-3.5 text-sm text-white focus:outline-none focus:border-orange-300/60 transition-all duration-300 cursor-pointer"
+                      >
+                        <option value="single">Single Piece ($1,800)</option>
+                        <option value="series">Series Collection ($4,500)</option>
+                        <option value="retainer">Monthly Retainer ($8,000)</option>
+                      </select>
+                    </div>
+
+                    <!-- Search Input with Kbd -->
+                    <div>
+                      <label class="block text-xs font-medium tracking-[0.2em] text-slate-300 uppercase mb-2">
+                        Quick Spec Search
+                      </label>
+                      <div class="relative">
+                        <input
+                          type="text"
+                          placeholder="Search token / class..."
+                          class="w-full rounded-lg bg-white/[0.03] border border-white/10 px-4 py-3.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-300/60 transition-all duration-300"
+                        />
+                        <span class="spec-tag absolute right-3 top-1/2 -translate-y-1/2 px-2 py-0.5 rounded bg-white/10 border border-white/15 text-[10px] text-slate-400">
+                          ⌘K
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Textarea -->
+                  <div>
+                    <label class="block text-xs font-medium tracking-[0.2em] text-slate-300 uppercase mb-2">
+                      Generative Brief
+                    </label>
+                    <textarea
+                      rows="3"
+                      placeholder="Describe lighting, shaders, and geometry requirements..."
+                      class="w-full rounded-lg bg-white/[0.03] border border-white/10 p-4 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-orange-300/60 focus:bg-white/[0.05] transition-all duration-300 resize-none"
+                    ></textarea>
+                  </div>
+
+                  <!-- Submit Row -->
+                  <div class="flex items-center justify-between pt-2">
+                    <label class="flex items-center gap-3 cursor-pointer select-none">
+                      <input type="checkbox" checked class="w-4 h-4 rounded bg-[#0a1128] border-white/20 accent-orange-400 cursor-pointer" />
+                      <span class="text-xs text-slate-400">Apply generative noise shader</span>
+                    </label>
+                    <button type="submit" class="px-7 py-3 rounded-md bg-orange-300 text-[#050a1c] text-xs font-semibold tracking-[0.25em] hover:bg-orange-200 transition-colors">
+                      TRANSMIT BRIEF
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Checkbox & Toggle Cards -->
+              <div class="space-y-6">
+                <!-- Interactive Toggle Switches -->
+                <div class="glass-panel p-6 rounded-2xl border border-white/10">
+                  <h4 class="text-xs font-semibold tracking-[0.2em] text-slate-300 uppercase mb-4">Toggle Switches</h4>
+                  <div class="space-y-4">
+                    <label class="flex items-center justify-between cursor-pointer">
+                      <span class="text-xs text-slate-300">Conic Flashlight Glow</span>
+                      <input type="checkbox" checked class="sr-only peer" id="toggle-flash" />
+                      <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-400 relative"></div>
+                    </label>
+                    <label class="flex items-center justify-between cursor-pointer">
+                      <span class="text-xs text-slate-300">WebGL Particles Active</span>
+                      <input type="checkbox" checked class="sr-only peer" />
+                      <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-400 relative"></div>
+                    </label>
+                    <label class="flex items-center justify-between cursor-pointer">
+                      <span class="text-xs text-slate-300">Laser Optical Flare</span>
+                      <input type="checkbox" checked class="sr-only peer" />
+                      <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-400 relative"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Radio Cards -->
+                <div class="glass-panel p-6 rounded-2xl border border-white/10">
+                  <h4 class="text-xs font-semibold tracking-[0.2em] text-slate-300 uppercase mb-4">Radio Option Card</h4>
+                  <div class="space-y-2">
+                    <label class="flex items-center gap-3 p-3 rounded-lg border border-orange-400/40 bg-orange-400/5 cursor-pointer">
+                      <input type="radio" name="plan" checked class="text-orange-400 accent-orange-400" />
+                      <div class="flex-1 text-xs">
+                        <span class="font-medium text-white block">4K High-Res Delivery</span>
+                        <span class="text-[10px] text-slate-400">Included in all tiers</span>
+                      </div>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded-lg border border-white/10 bg-white/[0.02] hover:border-white/20 cursor-pointer">
+                      <input type="radio" name="plan" class="text-orange-400 accent-orange-400" />
+                      <div class="flex-1 text-xs">
+                        <span class="font-medium text-slate-300 block">8K Master Sequences</span>
+                        <span class="text-[10px] text-slate-500">Enterprise Add-on</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── SUB-SECTION: CARDS & CONTAINERS ── -->
+          <div class="mb-20">
+            <div class="flex items-center justify-between mb-6 pb-2 border-b border-white/5">
+              <h3 class="text-xs font-semibold tracking-[0.25em] uppercase text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-teal-400"></span>
+                3. Cards, Storytelling Stages &amp; Project Surfaces
+              </h3>
+              <span class="spec-tag text-slate-500">Cursor Conic &amp; Zoom Physics</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+              <!-- Studio Card 1 (Atelier 89) -->
+              <div class="flash-card group relative p-[1px] rounded-3xl bg-gradient-to-b from-neutral-800 to-transparent hover:-translate-y-2 transition-all duration-500 cursor-pointer">
+                <div class="relative z-10 h-full bg-[#0a1128] rounded-[inherit] p-8 flex flex-col items-center gap-6 overflow-hidden">
+                  <i data-lucide="layers" class="w-4 h-4 text-slate-500 self-start group-hover:text-orange-300 transition-colors duration-300"></i>
+                  <i data-lucide="box" class="w-12 h-12 text-slate-300 group-hover:text-white group-hover:scale-110 transition-all duration-500"></i>
+                  <div class="text-center">
+                    <p class="text-xs tracking-[0.3em] text-slate-300 font-medium uppercase">ATELIER 89</p>
+                    <p class="text-xs tracking-[0.3em] text-orange-300/80 font-mono mt-2">01</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Studio Card 2 (Halcyon) -->
+              <div class="flash-card group relative p-[1px] rounded-3xl bg-gradient-to-b from-neutral-800 to-transparent hover:-translate-y-2 transition-all duration-500 cursor-pointer">
+                <div class="relative z-10 h-full bg-[#0a1128] rounded-[inherit] p-8 flex flex-col items-center gap-6 overflow-hidden">
+                  <i data-lucide="layers" class="w-4 h-4 text-slate-500 self-start group-hover:text-orange-300 transition-colors duration-300"></i>
+                  <i data-lucide="circle-dot" class="w-12 h-12 text-slate-300 group-hover:text-white group-hover:scale-110 transition-all duration-500"></i>
+                  <div class="text-center">
+                    <p class="text-xs tracking-[0.3em] text-slate-300 font-medium uppercase">HALCYON</p>
+                    <p class="text-xs tracking-[0.3em] text-orange-300/80 font-mono mt-2">02</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Studio Card 3 (Aurelia Vol.2 with Real 3D Image) -->
+              <div class="flash-card group relative p-[1px] rounded-3xl bg-gradient-to-b from-neutral-800 to-transparent hover:-translate-y-2 transition-all duration-500 cursor-pointer min-h-[16rem]">
+                <div class="relative z-10 h-full min-h-[16rem] bg-[#0a1128] rounded-[inherit] overflow-hidden">
+                  <img
+                    src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/d2d942bb-1e76-4954-a84d-126a46f9f8bc_3840w.png"
+                    alt="Aurelia Vol.2"
+                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    onerror="this.src='../assets/images/case-study-banner.png'"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-[#050a1c]/90 via-transparent to-transparent"></div>
+                  <div class="absolute bottom-0 inset-x-0 p-6 text-center">
+                    <p class="text-xs tracking-[0.3em] text-white font-medium">AURELIA <span class="text-orange-200/80">VOL.2</span></p>
+                    <p class="text-xs tracking-[0.3em] text-orange-300 font-mono mt-2 underline underline-offset-4 decoration-orange-300/40">03</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Studio Card 4 (Prism 3.0) -->
+              <div class="flash-card group relative p-[1px] rounded-3xl bg-gradient-to-b from-neutral-800 to-transparent hover:-translate-y-2 transition-all duration-500 cursor-pointer">
+                <div class="relative z-10 h-full bg-[#0a1128] rounded-[inherit] p-8 flex flex-col items-center gap-6 overflow-hidden">
+                  <i data-lucide="layers" class="w-4 h-4 text-slate-500 self-start group-hover:text-orange-300 transition-colors duration-300"></i>
+                  <i data-lucide="gem" class="w-12 h-12 text-slate-300 group-hover:text-white group-hover:scale-110 transition-all duration-500"></i>
+                  <div class="text-center">
+                    <p class="text-xs tracking-[0.3em] text-slate-300 font-medium uppercase">PRISM 3.0</p>
+                    <p class="text-xs tracking-[0.3em] text-orange-300/80 font-mono mt-2">04</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sticky Storytelling Pinned Stage Simulation -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/10">
+              <div class="flex items-center justify-between mb-6 pb-2 border-b border-white/5">
+                <div class="flex items-center gap-3">
+                  <span class="w-3 h-3 rounded-full bg-orange-400"></span>
+                  <span class="text-xs tracking-[0.3em] text-orange-200 font-medium uppercase">Sticky Storytelling Pinned Stage Component</span>
+                </div>
+                <span class="spec-tag text-slate-400">GSAP ScrollTrigger Pin Spec</span>
+              </div>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="relative rounded-2xl overflow-hidden aspect-[16/9] border border-white/15 shadow-[0_0_40px_rgba(29,78,216,0.3)]">
+                  <img
+                    src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/0445b53a-3a64-4b48-9ccc-f6ec4ba4c061_3840w.png"
+                    alt="Limitless Form"
+                    class="w-full h-full object-cover"
+                    onerror="this.src='../assets/images/demo-preview-card.png'"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-[#050a1c]/70 to-transparent"></div>
+                  <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-mono text-white/80">
+                    <span>STAGE // 01</span>
+                    <span>3840 × 2160 RENDER</span>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-xs tracking-[0.4em] text-orange-300 font-medium mb-2 uppercase">STORYTELLING COMPONENT</p>
+                  <h4 class="serif text-3xl text-white font-medium mb-4">Limitless Form: 3D Frontier</h4>
+                  <p class="text-sm text-slate-300 leading-relaxed mb-6">
+                    Each stage pins during scroll progression, performing coordinated focal blur-to-sharp transitions, scale zooms, and element-by-element text revelations.
+                  </p>
+                  <div class="flex items-center gap-4">
+                    <button class="px-5 py-2.5 rounded-md border border-orange-300/40 text-xs tracking-[0.2em] text-orange-200 hover:bg-orange-300/10 transition-colors">
+                      STAGE ACTIVE
+                    </button>
+                    <span class="text-xs font-mono text-slate-500">pin: true; scrub: 0.8s</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── SUB-SECTION: MODALS, BADGES & TOOLTIPS ── -->
+          <div class="mb-10">
+            <div class="flex items-center justify-between mb-6 pb-2 border-b border-white/5">
+              <h3 class="text-xs font-semibold tracking-[0.25em] uppercase text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                4. Modals, Badges, Tooltips &amp; Micro-Interactions
+              </h3>
+              <span class="spec-tag text-slate-500">Overlay &amp; Notification Specs</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Modal Trigger Card -->
+              <div class="glass-panel p-6 rounded-2xl border border-white/10 flex flex-col justify-between">
+                <div>
+                  <h4 class="text-xs font-semibold tracking-[0.2em] text-slate-300 uppercase mb-2">Modal Dialog System</h4>
+                  <p class="text-xs text-slate-400 mb-6">High-performance dialog with backdrop-blur and scale transition.</p>
+                </div>
+                <div class="py-4 flex justify-center">
+                  <button
+                    id="open-modal-demo"
+                    class="px-6 py-3 rounded-lg bg-white/[0.05] border border-white/15 text-xs tracking-[0.2em] text-white hover:bg-white/10 hover:border-orange-300 transition-all flex items-center gap-2"
+                  >
+                    <i data-lucide="maximize-2" class="w-3.5 h-3.5 text-orange-300"></i>
+                    <span>TRIGGER MODAL</span>
+                  </button>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 border-t border-white/5 pt-3">
+                  Events: click, escape key, backdrop tap
+                </div>
+              </div>
+
+              <!-- Badges Matrix -->
+              <div class="glass-panel p-6 rounded-2xl border border-white/10">
+                <h4 class="text-xs font-semibold tracking-[0.2em] text-slate-300 uppercase mb-4">Badge Hierarchy</h4>
+                <div class="flex flex-wrap gap-2.5">
+                  <span class="px-3 py-1 rounded-full bg-orange-400/10 border border-orange-400/30 text-[10px] tracking-[0.2em] font-medium text-orange-200 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-ping"></span>
+                    FEATURED
+                  </span>
+                  <span class="px-3 py-1 rounded-full bg-cyan-400/10 border border-cyan-400/30 text-[10px] tracking-[0.2em] font-medium text-cyan-200">
+                    LIVE SHADER
+                  </span>
+                  <span class="px-3 py-1 rounded-full bg-teal-400/10 border border-teal-400/30 text-[10px] tracking-[0.2em] font-medium text-teal-200">
+                    SERIES 02
+                  </span>
+                  <span class="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] tracking-[0.2em] font-medium text-white">
+                    4K PRO
+                  </span>
+                  <span class="px-3 py-1 rounded-full bg-rose-500/10 border border-rose-400/30 text-[10px] tracking-[0.2em] font-medium text-rose-200">
+                    LIMITED
+                  </span>
+                </div>
+              </div>
+
+              <!-- Tooltips Showcase -->
+              <div class="glass-panel p-6 rounded-2xl border border-white/10">
+                <h4 class="text-xs font-semibold tracking-[0.2em] text-slate-300 uppercase mb-4">Directional Tooltips</h4>
+                <div class="flex items-center justify-around py-4">
+                  <!-- Tooltip 1 -->
+                  <div class="group relative">
+                    <button class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white">
+                      <i data-lucide="info" class="w-4 h-4"></i>
+                    </button>
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center z-30 pointer-events-none">
+                      <span class="px-3 py-1.5 rounded bg-slate-900 border border-white/15 text-[10px] tracking-wider text-white whitespace-nowrap shadow-xl">
+                        Top Tooltip Spec
+                      </span>
+                      <span class="w-2 h-2 bg-slate-900 border-r border-b border-white/15 transform rotate-45 -mt-1"></span>
+                    </div>
+                  </div>
+
+                  <!-- Tooltip 2 -->
+                  <div class="group relative">
+                    <button class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white">
+                      <i data-lucide="zap" class="w-4 h-4 text-orange-300"></i>
+                    </button>
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center z-30 pointer-events-none">
+                      <span class="px-3 py-1.5 rounded bg-slate-900 border border-orange-300/30 text-[10px] tracking-wider text-orange-200 whitespace-nowrap shadow-xl">
+                        Fast GPU Pipeline
+                      </span>
+                      <span class="w-2 h-2 bg-slate-900 border-r border-b border-orange-300/30 transform rotate-45 -mt-1"></span>
+                    </div>
+                  </div>
+
+                  <!-- Tooltip 3 -->
+                  <div class="group relative">
+                    <button class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white">
+                      <i data-lucide="shield-check" class="w-4 h-4 text-cyan-300"></i>
+                    </button>
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:flex flex-col items-center z-30 pointer-events-none">
+                      <span class="px-3 py-1.5 rounded bg-slate-900 border border-cyan-300/30 text-[10px] tracking-wider text-cyan-200 whitespace-nowrap shadow-xl">
+                        Verified Canon
+                      </span>
+                      <span class="w-2 h-2 bg-slate-900 border-r border-b border-cyan-300/30 transform rotate-45 -mt-1"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 4. ICON SYSTEM (LUCIDE & SOLAR ICONIFY SHOWCASE)              -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <section id="icons" class="relative py-28 px-6 border-t border-white/10">
+        <!-- Ambient Watermark -->
+        <div class="absolute left-0 top-12 pointer-events-none select-none opacity-5 overflow-hidden">
+          <span class="serif text-[16vw] font-bold text-watermark">ICONS</span>
+        </div>
+
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Header -->
+          <div class="ds-section-divider">
+            <div class="flex items-center gap-3 text-xs tracking-[0.4em] text-orange-300 font-medium mb-3">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>SECTION 04</span>
+            </div>
+            <h2 class="serif text-4xl sm:text-5xl font-medium tracking-tight text-white mb-4">
+              Icon System &amp; Stroke Geometry
+            </h2>
+            <p class="text-sm text-slate-400 max-w-3xl leading-relaxed">
+              Standardized at <code class="text-orange-200">1.5px stroke width</code> with geometric rounded caps. Compatible with both Lucide SVG vector engines and Iconify Solar Linear libraries. Click any icon to copy its snippet.
+            </p>
+          </div>
+
+          <!-- Icon Search & Filter -->
+          <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="relative max-w-md w-full">
+              <input
+                id="icon-search-input"
+                type="text"
+                placeholder="Search icons (e.g. layers, box, arrow)..."
+                class="w-full rounded-xl bg-white/[0.04] border border-white/10 pl-10 pr-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-orange-300/50"
+              />
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            </div>
+            <span class="spec-tag text-slate-400">Click any icon tile to copy HTML</span>
+          </div>
+
+          <!-- Interactive Icon Grid -->
+          <div id="icon-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+            <!-- Icon Tiles -->
+            <button onclick="copyIconCode('layers')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="layers" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">layers</span>
+            </button>
+
+            <button onclick="copyIconCode('box')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="box" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">box</span>
+            </button>
+
+            <button onclick="copyIconCode('gem')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="gem" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">gem</span>
+            </button>
+
+            <button onclick="copyIconCode('circle-dot')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="circle-dot" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">circle-dot</span>
+            </button>
+
+            <button onclick="copyIconCode('sparkles')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="sparkles" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">sparkles</span>
+            </button>
+
+            <button onclick="copyIconCode('play')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="play" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">play</span>
+            </button>
+
+            <button onclick="copyIconCode('arrow-right')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="arrow-right" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">arrow-right</span>
+            </button>
+
+            <button onclick="copyIconCode('arrow-up-right')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="arrow-up-right" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">arrow-up-right</span>
+            </button>
+
+            <button onclick="copyIconCode('mic')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="mic" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">mic</span>
+            </button>
+
+            <button onclick="copyIconCode('quote')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="quote" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">quote</span>
+            </button>
+
+            <button onclick="copyIconCode('tag')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="tag" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">tag</span>
+            </button>
+
+            <button onclick="copyIconCode('check')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="check" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">check</span>
+            </button>
+
+            <button onclick="copyIconCode('mail')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="mail" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">mail</span>
+            </button>
+
+            <button onclick="copyIconCode('code')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="code" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">code</span>
+            </button>
+
+            <button onclick="copyIconCode('zap')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="zap" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">zap</span>
+            </button>
+
+            <button onclick="copyIconCode('shield-check')" class="icon-card flash-card glass-panel p-4 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-orange-400/50 hover:bg-white/[0.06] transition-all group">
+              <i data-lucide="shield-check" class="w-6 h-6 text-slate-300 group-hover:text-orange-300 group-hover:scale-110 transition-all"></i>
+              <span class="text-[10px] font-mono text-slate-400 truncate w-full text-center">shield-check</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 5. MOTION & ANIMATION SYSTEM                                  -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <section id="motion" class="relative py-28 px-6 border-t border-white/10">
+        <!-- Ambient Watermark -->
+        <div class="absolute right-0 top-12 pointer-events-none select-none opacity-5 overflow-hidden">
+          <span class="serif text-[16vw] font-bold text-watermark">MOTION</span>
+        </div>
+
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Header -->
+          <div class="ds-section-divider">
+            <div class="flex items-center gap-3 text-xs tracking-[0.4em] text-orange-300 font-medium mb-3">
+              <i data-lucide="activity" class="w-4 h-4"></i>
+              <span>SECTION 05</span>
+            </div>
+            <h2 class="serif text-4xl sm:text-5xl font-medium tracking-tight text-white mb-4">
+              Motion System &amp; Interactive Physics
+            </h2>
+            <p class="text-sm text-slate-400 max-w-3xl leading-relaxed">
+              Orchestrated via GSAP ScrollTrigger and real-time WebGL frame handlers. Timing curves emulate physical inertia, optical blur-in dissipation, and fluid cursor attraction.
+            </p>
+          </div>
+
+          <!-- Motion Curves & Duration Matrix -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <!-- Curve 1 -->
+            <div class="flash-card glass-panel p-6 rounded-2xl border border-white/10">
+              <span class="text-xs font-mono text-orange-300 block mb-1">EASING: POWER3.OUT</span>
+              <p class="text-sm font-semibold text-white mb-2">cubic-bezier(0.16, 1, 0.3, 1)</p>
+              <p class="text-xs text-slate-400 mb-4">Used for hero entrances, card risers, and reveal blur transitions.</p>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-orange-400 rounded-full w-3/4 animate-pulse"></div>
+              </div>
+            </div>
+
+            <!-- Curve 2 -->
+            <div class="flash-card glass-panel p-6 rounded-2xl border border-white/10">
+              <span class="text-xs font-mono text-cyan-300 block mb-1">EASING: ELASTIC.OUT(1, 0.35)</span>
+              <p class="text-sm font-semibold text-white mb-2">Spring Physics Return</p>
+              <p class="text-xs text-slate-400 mb-4">Used for 3D torus return bounce and magnetic button release.</p>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-cyan-400 rounded-full w-4/5 animate-pulse"></div>
+              </div>
+            </div>
+
+            <!-- Curve 3 -->
+            <div class="flash-card glass-panel p-6 rounded-2xl border border-white/10">
+              <span class="text-xs font-mono text-teal-300 block mb-1">EASING: SINE.INOUT</span>
+              <p class="text-sm font-semibold text-white mb-2">Ambient Breathing Loop</p>
+              <p class="text-xs text-slate-400 mb-4">Continuous 3-second gentle vertical levitation for 3D centerpieces.</p>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-teal-400 rounded-full w-2/3 animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Word-by-Word Scroll Reveal Showcase (from Design System 2) -->
+          <div class="glass-panel p-8 rounded-3xl border border-white/10">
+            <h3 class="text-xs font-semibold tracking-[0.25em] uppercase text-slate-300 mb-4">
+              Word-by-Word Vision Typography Revelation (Karaoke Scroll System)
+            </h3>
+            <p id="vision-text" class="serif text-3xl sm:text-4xl text-slate-400 leading-relaxed max-w-4xl">
+              <span class="lyric-word text-white">We</span>
+              <span class="lyric-word text-white">design</span>
+              <span class="lyric-word text-orange-300 font-semibold">autonomous</span>
+              <span class="lyric-word text-white">visual</span>
+              <span class="lyric-word text-white">systems</span>
+              <span class="lyric-word text-slate-500">where</span>
+              <span class="lyric-word text-white">colour</span>
+              <span class="lyric-word text-orange-300 font-semibold">breathes</span>
+              <span class="lyric-word text-slate-500">and</span>
+              <span class="lyric-word text-white">structure</span>
+              <span class="lyric-word text-cyan-300">dissolves</span>
+              <span class="lyric-word text-slate-500">into</span>
+              <span class="lyric-word text-white">pure</span>
+              <span class="lyric-word text-orange-200">sensory</span>
+              <span class="lyric-word text-white">frontiers.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <!-- 6. INTERACTIVE SPEC PLAYGROUND & TOKEN EXPORTER              -->
+      <!-- ══════════════════════════════════════════════════════════════ -->
+      <section id="playground" class="relative py-28 px-6 border-t border-white/10 bg-white/[0.01]">
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Header -->
+          <div class="ds-section-divider">
+            <div class="flex items-center gap-3 text-xs tracking-[0.4em] text-orange-300 font-medium mb-3">
+              <i data-lucide="sliders" class="w-4 h-4"></i>
+              <span>SECTION 06</span>
+            </div>
+            <h2 class="serif text-4xl sm:text-5xl font-medium tracking-tight text-white mb-4">
+              Live Token Playground &amp; Code Exporter
+            </h2>
+            <p class="text-sm text-slate-400 max-w-3xl leading-relaxed">
+              Tweak global system tokens in real-time or export the canonical CSS stylesheet tokens directly to your clipboard.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Controls Panel -->
+            <div class="glass-panel p-6 rounded-2xl border border-white/10 space-y-6">
+              <h3 class="text-xs font-semibold tracking-[0.2em] text-white uppercase pb-2 border-b border-white/5">
+                Dynamic Parameter Tuner
+              </h3>
+
+              <!-- Color Tone Switcher -->
+              <div>
+                <label class="block text-xs font-mono text-slate-400 mb-2">Accent Hue Channel</label>
+                <div class="grid grid-cols-4 gap-2">
+                  <button onclick="setGlobalAccent('#fdba74')" class="h-8 rounded-lg bg-[#fdba74] border border-white/30 focus:ring-2 focus:ring-white"></button>
+                  <button onclick="setGlobalAccent('#67e8f9')" class="h-8 rounded-lg bg-[#67e8f9] border border-white/30 focus:ring-2 focus:ring-white"></button>
+                  <button onclick="setGlobalAccent('#5eead4')" class="h-8 rounded-lg bg-[#5eead4] border border-white/30 focus:ring-2 focus:ring-white"></button>
+                  <button onclick="setGlobalAccent('#f43f5e')" class="h-8 rounded-lg bg-[#f43f5e] border border-white/30 focus:ring-2 focus:ring-white"></button>
+                </div>
+              </div>
+
+              <!-- Blur Radius -->
+              <div>
+                <div class="flex justify-between text-xs font-mono text-slate-400 mb-2">
+                  <span>Glass Backdrop Blur</span>
+                  <span id="blur-val">16px</span>
+                </div>
+                <input
+                  type="range"
+                  min="4"
+                  max="40"
+                  value="16"
+                  id="blur-slider"
+                  class="w-full accent-orange-400 cursor-pointer"
+                  oninput="document.getElementById('blur-val').innerText = this.value + 'px'"
+                />
+              </div>
+
+              <!-- Quick Export Actions -->
+              <div class="pt-4 border-t border-white/5 space-y-3">
+                <button
+                  id="copy-tokens-btn"
+                  class="w-full py-3 rounded-lg bg-orange-400/20 border border-orange-400/40 text-xs font-mono tracking-wider text-orange-200 hover:bg-orange-400/30 transition-all flex items-center justify-center gap-2"
+                >
+                  <i data-lucide="copy" class="w-4 h-4"></i>
+                  <span>COPY CSS TOKENS</span>
+                </button>
+                <button
+                  onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+                  class="w-full py-3 rounded-lg bg-white/5 border border-white/10 text-xs font-mono tracking-wider text-slate-300 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+                >
+                  <i data-lucide="arrow-up" class="w-4 h-4"></i>
+                  <span>BACK TO HERO</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Code Preview Display Box -->
+            <div class="lg:col-span-2 glass-panel p-6 rounded-2xl border border-white/10 flex flex-col">
+              <div class="flex items-center justify-between pb-3 mb-4 border-b border-white/5 text-xs font-mono text-slate-400">
+                <span>output // :root token sheet</span>
+                <span class="text-emerald-300">● LIVE COMPILED</span>
+              </div>
+              <pre class="flex-1 font-mono text-xs text-orange-200/90 overflow-x-auto p-4 rounded-xl bg-[#050a1c] border border-white/5 leading-relaxed"><code id="code-token-payload">:root {
+  /* Colors & Surfaces */
+  --canvas-void: #050a1c;
+  --surface-card: #0a1128;
+  --surface-elevated: #0f1738;
+  --accent-solar-gold: #fdba74;
+  --accent-laser-cyan: #67e8f9;
+  --accent-odyssey-teal: #5eead4;
+  
+  /* Typography Families */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  
+  /* Spacing Rhythms */
+  --space-unit: 4px;
+  --space-card-pad: 2rem;
+  --space-section-gap: 7rem;
+  
+  /* Motion Constants */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-normal: 400ms;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- FOOTER SPECIFICATION                                          -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <footer class="relative border-t border-white/10 py-16 px-6 bg-[#050a1c]/90">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="flex items-center gap-4">
+          <span class="serif text-3xl font-bold text-white">N<span class="text-orange-300">.</span></span>
+          <div class="text-xs text-slate-400 tracking-[0.2em] uppercase">
+            Noah Vance Generative System · Living Spec v2.4
+          </div>
+        </div>
+
+        <nav class="flex items-center gap-8 text-xs tracking-[0.25em] text-slate-400 font-medium">
+          <a href="#hero" class="hover:text-white transition-colors">HERO</a>
+          <a href="#typography" class="hover:text-white transition-colors">TYPOGRAPHY</a>
+          <a href="#colors" class="hover:text-white transition-colors">COLORS</a>
+          <a href="#components" class="hover:text-white transition-colors">COMPONENTS</a>
+          <a href="#playground" class="text-orange-300 hover:text-orange-200 transition-colors">TOKENS</a>
+        </nav>
+
+        <p class="text-[11px] font-mono text-slate-500">
+          © 2025 · NOAH VANCE · ALL RIGHTS RESERVED
+        </p>
+      </div>
+    </footer>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- DEMO MODAL OVERLAY                                            -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <div
+      id="modal-demo"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-xl p-4 transition-all duration-300"
+    >
+      <div class="flash-card glass-panel w-full max-w-lg p-8 rounded-3xl border border-white/20 shadow-2xl relative">
+        <button id="close-modal-demo" class="absolute top-5 right-5 text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <div class="flex items-center gap-3 text-xs tracking-[0.3em] text-orange-300 font-medium mb-3">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>MODAL SPECIFICATION</span>
+        </div>
+        <h3 class="serif text-3xl font-medium text-white mb-3">Generative Artifact Viewer</h3>
+        <p class="text-sm text-slate-300 leading-relaxed mb-6">
+          High fidelity modal container with ambient lighting pass-through, accessible focus traps, and smooth spring scale geometry.
+        </p>
+        <div class="flex items-center justify-end gap-3">
+          <button id="close-modal-demo-btn" class="px-5 py-2.5 rounded-lg border border-white/15 text-xs text-slate-300 hover:bg-white/5">
+            Dismiss
+          </button>
+          <button class="px-5 py-2.5 rounded-lg bg-orange-300 text-[#050a1c] text-xs font-semibold tracking-wider hover:bg-orange-200">
+            Confirm Selection
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+      <div class="px-5 py-3 rounded-xl glass-panel border border-orange-300/40 text-xs font-mono text-orange-200 shadow-2xl flex items-center gap-2">
+        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+        <span id="toast-text">Tokens copied to clipboard!</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- JAVASCRIPT: WEBGL SHADER + GSAP + CONIC FLASHLIGHT CONTROLLER  -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <script>
+      // 1. Initialize Lucide Icons
+      if (window.lucide) {
+        lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+      }
+
+      // 2. Mobile Menu Toggle
+      const menuBtn = document.getElementById('menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+
+      // 3. Modal Dialog Interaction
+      const openModalBtn = document.getElementById('open-modal-demo');
+      const closeModalBtn = document.getElementById('close-modal-demo');
+      const closeModalDemoBtn = document.getElementById('close-modal-demo-btn');
+      const modal = document.getElementById('modal-demo');
+
+      function toggleModal(show) {
+        if (!modal) return;
+        if (show) {
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+        } else {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }
+      }
+
+      if (openModalBtn) openModalBtn.addEventListener('click', () => toggleModal(true));
+      if (closeModalBtn) closeModalBtn.addEventListener('click', () => toggleModal(false));
+      if (closeModalDemoBtn) closeModalDemoBtn.addEventListener('click', () => toggleModal(false));
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) toggleModal(false);
+        });
+      }
+
+      // 4. Toast Notification Engine
+      function showToast(msg) {
+        const toast = document.getElementById('toast');
+        const text = document.getElementById('toast-text');
+        if (!toast || !text) return;
+        text.innerText = msg;
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        setTimeout(() => {
+          toast.classList.add('translate-y-20', 'opacity-0');
+        }, 2600);
+      }
+
+      // 5. Copy Token Code
+      const copyTokensBtn = document.getElementById('copy-tokens-btn');
+      if (copyTokensBtn) {
+        copyTokensBtn.addEventListener('click', () => {
+          const payload = document.getElementById('code-token-payload')?.innerText || '';
+          navigator.clipboard.writeText(payload);
+          showToast('CSS Tokens Copied to Clipboard!');
+        });
+      }
+
+      function copyIconCode(name) {
+        const code = `<i data-lucide="${name}"></i>`;
+        navigator.clipboard.writeText(code);
+        showToast(`Copied <i data-lucide="${name}"></i>`);
+      }
+
+      // 6. Interactive Sandbox Toggles
+      const sandboxStrokeToggle = document.getElementById('sandbox-stroke-toggle');
+      const sandboxFontToggle = document.getElementById('sandbox-font-toggle');
+      const sandboxOutput = document.getElementById('sandbox-output');
+
+      if (sandboxStrokeToggle && sandboxOutput) {
+        sandboxStrokeToggle.addEventListener('click', () => {
+          sandboxOutput.classList.toggle('stroke-text-white');
+        });
+      }
+      if (sandboxFontToggle && sandboxOutput) {
+        sandboxFontToggle.addEventListener('click', () => {
+          if (sandboxOutput.classList.contains('serif')) {
+            sandboxOutput.classList.remove('serif');
+            sandboxOutput.classList.add('font-sans', 'font-bold', 'tracking-tight');
+          } else {
+            sandboxOutput.classList.add('serif');
+            sandboxOutput.classList.remove('font-sans', 'font-bold', 'tracking-tight');
+          }
+        });
+      }
+
+      // 7. Dynamic Accent Changer
+      function setGlobalAccent(color) {
+        document.documentElement.style.setProperty('--color-accent-orange', color);
+        showToast('Accent tone updated: ' + color);
+      }
+
+      // 8. Icon Search Filter
+      const iconSearch = document.getElementById('icon-search-input');
+      if (iconSearch) {
+        iconSearch.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase();
+          document.querySelectorAll('.icon-card').forEach((card) => {
+            const text = card.innerText.toLowerCase();
+            card.style.display = text.includes(query) ? 'flex' : 'none';
+          });
+        });
+      }
+    </script>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- GSAP SCROLLTRIGGERS & PHYSICS CONTROLLERS                     -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <script>
+      if (window.gsap && window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Ambient Background Parallax
+        gsap.to('#bg-layer-1', {
+          yPercent: -15,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: document.body,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 1.2
+          }
+        });
+        gsap.to('#bg-layer-2', {
+          yPercent: -30,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: document.body,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 0.8
+          }
+        });
+
+        // Hero Intro Element Stagger Reveal
+        gsap.fromTo(
+          '.hero-el',
+          { opacity: 0, y: 35, filter: 'blur(10px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, stagger: 0.12, ease: 'power3.out', delay: 0.2 }
+        );
+
+        // Torus 3D Floating Idle
+        gsap.to('#torus', {
+          y: '-=12',
+          duration: 3.5,
+          yoyo: true,
+          repeat: -1,
+          ease: 'sine.inOut'
+        });
+
+        // Magnetic Button Physics
+        const magBtns = document.querySelectorAll('.btn-magnetic, #hero-magnetic-btn');
+        magBtns.forEach((mag) => {
+          mag.addEventListener('mousemove', (e) => {
+            const r = mag.getBoundingClientRect();
+            gsap.to(mag, {
+              x: (e.clientX - r.left - r.width / 2) * 0.35,
+              y: (e.clientY - r.top - r.height / 2) * 0.45,
+              duration: 0.35,
+              ease: 'power2.out'
+            });
+          });
+          mag.addEventListener('mouseleave', () => {
+            gsap.to(mag, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+          });
+        });
+      }
+    </script>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- REAL-TIME CONIC CURSOR FLASHLIGHT ENGINE                      -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <script>
+      (function () {
+        const cards = document.querySelectorAll('.flash-card, .glass-panel');
+        window.addEventListener('pointermove', function (e) {
+          cards.forEach(function (card) {
+            const r = card.getBoundingClientRect();
+            const dx = e.clientX - (r.left + r.width / 2);
+            const dy = e.clientY - (r.top + r.height / 2);
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+            const dist = Math.hypot(dx, dy);
+            const edge = Math.hypot(r.width / 2, r.height / 2);
+            const proximity = Math.max(0, 1 - Math.abs(dist - edge) / 220);
+            card.style.setProperty('--cursor-angle', angle.toFixed(1) + 'deg');
+            card.style.setProperty('--proximity', proximity.toFixed(3));
+          });
+        });
+
+        // Torus Mouse Reaction Tilt
+        const torusEl = document.getElementById('torus');
+        if (torusEl && window.gsap) {
+          window.addEventListener('mousemove', function (e) {
+            const px = e.clientX / window.innerWidth - 0.5;
+            const py = e.clientY / window.innerHeight - 0.5;
+            const dist = Math.hypot(px, py);
+            if (dist < 0.35) {
+              gsap.to(torusEl, {
+                rotationY: px * 20,
+                rotationX: -py * 20,
+                x: px * 120,
+                y: py * 90,
+                duration: 0.8,
+                ease: 'power3.out',
+                overwrite: 'auto'
+              });
+            } else {
+              gsap.to(torusEl, {
+                rotationY: px * 8,
+                rotationX: -py * 8,
+                x: 0,
+                y: 0,
+                duration: 1.4,
+                ease: 'elastic.out(1, 0.35)',
+                overwrite: 'auto'
+              });
+            }
+          });
+        }
+      })();
+    </script>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- REAL-TIME WEBGL CANVAS SHADER (PARTICLES & MESH GRADIENT)    -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <script>
+      (function () {
+        const canvas = document.getElementById('hero-gl');
+        if (!canvas) return;
+        const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+        if (!gl) return;
+
+        function resize() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = canvas.clientWidth * dpr;
+          canvas.height = canvas.clientHeight * dpr;
+          gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        function sh(t, s) {
+          const o = gl.createShader(t);
+          gl.shaderSource(o, s);
+          gl.compileShader(o);
+          return o;
+        }
+
+        function prog(v, f) {
+          const p = gl.createProgram();
+          gl.attachShader(p, sh(gl.VERTEX_SHADER, v));
+          gl.attachShader(p, sh(gl.FRAGMENT_SHADER, f));
+          gl.linkProgram(p);
+          return p;
+        }
+
+        /* Mesh Gradient Fluid Shader */
+        const gp = prog(
+          'attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }',
+          'precision mediump float; uniform vec2 r; uniform float t;' +
+            'void main(){' +
+            'vec2 uv = gl_FragCoord.xy / r;' +
+            'vec2 c1 = vec2(.28 + .14 * sin(t * .31), .62 + .12 * cos(t * .42));' +
+            'vec2 c2 = vec2(.74 + .12 * cos(t * .24), .34 + .14 * sin(t * .37));' +
+            'vec2 c3 = vec2(.5 + .2 * sin(t * .19 + 2.), .5 + .18 * sin(t * .28 + 1.));' +
+            'float d1 = exp(-3.2 * length(uv - c1));' +
+            'float d2 = exp(-3.2 * length(uv - c2));' +
+            'float d3 = exp(-3.8 * length(uv - c3));' +
+            'vec3 col = vec3(.13, .25, .78) * d1 + vec3(.04, .5, .6) * d2 + vec3(.98, .55, .25) * d3 * .5;' +
+            'float a = clamp((d1 + d2 + d3) * .5, 0., .75);' +
+            'gl_FragColor = vec4(col, a);' +
+            '}'
+        );
+
+        /* Particle Attractor Shader */
+        const pp = prog(
+          'attribute vec2 a; attribute float s; varying float vs; void main(){ vs = s; gl_Position = vec4(a, 0., 1.); gl_PointSize = s; }',
+          'precision mediump float; varying float vs;' +
+            'void main(){' +
+            'vec2 d = gl_PointCoord - vec2(.5);' +
+            'float m = smoothstep(.5, .08, length(d));' +
+            'vec3 c = mix(vec3(.55, .7, 1.), vec3(1., .78, .45), step(3.2, vs));' +
+            'gl_FragColor = vec4(c * m, m * .9);' +
+            '}'
+        );
+
+        const qb = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, qb);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+
+        let mx = 0, my = 0;
+        window.addEventListener('mousemove', function (e) {
+          const b = canvas.getBoundingClientRect();
+          mx = ((e.clientX - b.left) / b.width) * 2 - 1;
+          my = -(((e.clientY - b.top) / b.height) * 2 - 1);
+        });
+
+        const N = 1200;
+        const pos = new Float32Array(N * 2);
+        const vel = new Float32Array(N * 2);
+        const siz = new Float32Array(N);
+
+        function spawn(i) {
+          pos[2 * i] = Math.random() * 2 - 1;
+          pos[2 * i + 1] = Math.random() * 2 - 1;
+          vel[2 * i] = 0;
+          vel[2 * i + 1] = 0;
+          siz[i] = 1.5 + Math.random() * 3.5;
+        }
+
+        for (let i = 0; i < N; i++) spawn(i);
+
+        const pb = gl.createBuffer();
+        const sb = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, sb);
+        gl.bufferData(gl.ARRAY_BUFFER, siz, gl.STATIC_DRAW);
+
+        const t0 = performance.now();
+        function frame(now) {
+          const t = (now - t0) / 1000, dt = 0.016;
+          gl.clearColor(0, 0, 0, 0);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+          gl.enable(gl.BLEND);
+          gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+          // Draw Mesh Gradient
+          gl.useProgram(gp);
+          gl.bindBuffer(gl.ARRAY_BUFFER, qb);
+          const lp = gl.getAttribLocation(gp, 'p');
+          gl.enableVertexAttribArray(lp);
+          gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
+          gl.uniform2f(gl.getUniformLocation(gp, 'r'), canvas.width, canvas.height);
+          gl.uniform1f(gl.getUniformLocation(gp, 't'), t);
+          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+          // Update & Draw Particles
+          for (let i = 0; i < N; i++) {
+            const dx = mx - pos[2 * i];
+            const dy = my - pos[2 * i + 1];
+            const d = Math.sqrt(dx * dx + dy * dy) + 1e-4;
+            const f = 0.6 / (d + 0.08);
+            vel[2 * i] += ((dx / d) * f - (dy / d) * f * 0.35) * dt;
+            vel[2 * i + 1] += ((dy / d) * f + (dx / d) * f * 0.35) * dt;
+            vel[2 * i] *= 0.99;
+            vel[2 * i + 1] *= 0.99;
+            pos[2 * i] += vel[2 * i] * dt;
+            pos[2 * i + 1] += vel[2 * i + 1] * dt;
+            if (d < 0.05) spawn(i);
+          }
+
+          gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+          gl.useProgram(pp);
+          gl.bindBuffer(gl.ARRAY_BUFFER, pb);
+          gl.bufferData(gl.ARRAY_BUFFER, pos, gl.DYNAMIC_DRAW);
+          const la = gl.getAttribLocation(pp, 'a');
+          gl.enableVertexAttribArray(la);
+          gl.vertexAttribPointer(la, 2, gl.FLOAT, false, 0, 0);
+          gl.bindBuffer(gl.ARRAY_BUFFER, sb);
+          const ls = gl.getAttribLocation(pp, 's');
+          gl.enableVertexAttribArray(ls);
+          gl.vertexAttribPointer(ls, 1, gl.FLOAT, false, 0, 0);
+          gl.drawArrays(gl.POINTS, 0, N);
+
+          requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      })();
+    </script>
+  </body>
+</html>

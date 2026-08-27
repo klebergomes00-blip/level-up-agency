@@ -14,8 +14,9 @@
     <!-- 1. Critical CSS First (Immediate Render Tree Construction for sub-1.5s FCP) -->
     
 
-    <!-- 2. Single Real LCP Preload (Header 3D Logo only, zero bandwidth competition) -->
+        <!-- 2. Priority Hero LCP Preload (Logo 3D & Background Earth) -->
     <link rel="preload" as="image" href="assets/images/logo-3d-transparent.webp" type="image/webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="assets/images/bg-earth.webp" type="image/webp" fetchpriority="high" />
 
     <!-- 3. Preconnect for Google Fonts (Non-Blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -650,12 +651,7 @@
       >
         <!-- Background Video for Section 02 (seunda dobra.mp4) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
-          <video id="video-dobra-2"
-            autoplay
-            loop
-            muted
-            playsinline
-            preload="metadata"
+          <video id="video-dobra-2" autoplay loop muted playsinline preload="none" loading="lazy"
             class="w-full h-full object-cover object-center opacity-45 md:opacity-55 filter brightness-105 contrast-110"
            poster="assets/images/poster-dobra2.webp">
             <source src="assets/videos/bg-dobra2.webm" type="video/webm" />
@@ -841,12 +837,7 @@
       >
         <!-- Background Video for Section 03 (dobra3.mp4) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
-          <video id="video-dobra-3"
-            autoplay
-            loop
-            muted
-            playsinline
-            preload="metadata"
+          <video id="video-dobra-3" autoplay loop muted playsinline preload="none" loading="lazy"
             class="w-full h-full object-cover object-center opacity-45 md:opacity-55 filter brightness-105 contrast-110"
            poster="assets/images/poster-dobra3.webp">
             <source src="assets/videos/bg-dobra3.webm" type="video/webm" />
@@ -1260,12 +1251,7 @@
                 <div class="relative w-full h-full rounded-[18px] sm:rounded-[24px] overflow-hidden bg-black flex items-center justify-center">
                   
                   <!-- Full-Bleed Video Media (projeto2.mp4 - 100% Uncropped) -->
-                  <video id="video-project-2"
-                    autoplay
-                    loop
-                    muted
-                    playsinline
-                    preload="metadata"
+                  <video id="video-project-2" autoplay loop muted playsinline preload="none" loading="lazy"
                     class="w-full h-full object-cover object-center filter brightness-105 contrast-105 group-hover:scale-[1.02] transition-transform duration-700 block"
                    poster="assets/images/poster-projeto2.webp">
                     <source src="assets/videos/showcase-projeto2.webm" type="video/webm" />
@@ -1286,12 +1272,7 @@
                 <div class="relative w-full h-full rounded-[17.5px] sm:rounded-[23.5px] overflow-hidden bg-black flex items-center justify-center">
                   
                   <!-- Full-Bleed Video Media (projeto1.mp4 - 100% Uncropped) -->
-                  <video id="video-project-1"
-                    autoplay
-                    loop
-                    muted
-                    playsinline
-                    preload="metadata"
+                  <video id="video-project-1" autoplay loop muted playsinline preload="none" loading="lazy"
                     class="w-full h-full object-cover object-center filter brightness-105 contrast-105 group-hover:scale-[1.02] transition-transform duration-700 block"
                    poster="assets/images/poster-projeto1.webp">
                     <source src="assets/videos/showcase-projeto1.webm" type="video/webm" />
@@ -3195,6 +3176,7 @@
         gsap.registerPlugin(ScrollTrigger);
 
         ScrollTrigger.config({
+          autoRefreshEvents: "DOMContentLoaded,load",
           limitCallbacks: true,
           syncInterval: 100
         });
@@ -3899,13 +3881,13 @@
         }
       }
 
-      // Initialize engine on DOMContentLoaded via requestAnimationFrame
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
+      // Initialize engine after initial layout settles (Zero Forced Reflow)
+      if (document.readyState === 'complete') {
+        requestAnimationFrame(setupLazySectionEngine);
+      } else {
+        window.addEventListener('load', () => {
           requestAnimationFrame(setupLazySectionEngine);
         });
-      } else {
-        requestAnimationFrame(setupLazySectionEngine);
       }
     </script>
   </body>

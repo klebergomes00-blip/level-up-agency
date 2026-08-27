@@ -10,9 +10,13 @@
     />
     <meta name="theme-color" content="#050a1c" />
 
-    <!-- Favicon & Touch Icons -->
-    <link rel="icon" type="image/png" href="assets/images/logo-3d-transparent.png" />
-    <link rel="apple-touch-icon" href="assets/images/logo-3d-transparent.png" />
+    <!-- Favicon & Touch Icons (Ultra-lightweight 9KB) -->
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+
+    <!-- Performance Preloads (Critical LCP Assets) -->
+    <link rel="preload" as="image" href="assets/images/bg-earth.webp" type="image/webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="assets/images/logo-3d-transparent.webp" type="image/webp" fetchpriority="high" />
 
     <!-- Open Graph / Social Media Metadata -->
     <meta property="og:site_name" content="LEVELUP" />
@@ -21,14 +25,14 @@
       property="og:description"
       content="Sites e Landing Pages que impressionam. Google Business Profile que gera clientes qualificados em qualquer lugar."
     />
-    <meta property="og:image" content="assets/images/logo-3d-transparent.png" />
+    <meta property="og:image" content="assets/images/logo-3d-transparent.webp" />
     <meta property="og:type" content="website" />
 
     <!-- Twitter Card Metadata -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="LEVELUP — Criação de Sites &amp; Presença Digital" />
     <meta name="twitter:description" content="Mais visitas, mais ligações e mais faturamento com sites de alta conversão e presença no Google." />
-    <meta name="twitter:image" content="assets/images/logo-3d-transparent.png" />
+    <meta name="twitter:image" content="assets/images/logo-3d-transparent.webp" />
 
     <!-- JSON-LD Structured Data (Schema.org / ProfessionalService) -->
     <script type="application/ld+json">
@@ -36,7 +40,7 @@
       "@context": "https://schema.org",
       "@type": "ProfessionalService",
       "name": "LEVELUP Digital Agency",
-      "image": "assets/images/logo-3d-transparent.png",
+      "image": "assets/images/logo-3d-transparent.webp",
       "description": "Especialista em Google Business Profile e Criação de Sites e Landing Pages de Alto Padrão.",
       "telephone": "+5561996229988",
       "priceRange": "$",
@@ -52,25 +56,27 @@
     }
     </script>
 
-    <!-- CDN & Local Fallback Dependencies -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="assets/js/tailwind.min.js" onerror="void(0)"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="assets/js/gsap.min.js" onerror="void(0)"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="assets/js/ScrollTrigger.min.js" onerror="void(0)"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="assets/js/lucide.min.js" onerror="void(0)"></script>
-    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    <script src="assets/js/iconify-icon.min.js" onerror="void(0)"></script>
+    <!-- Deferred External Dependencies (Eliminates Render-Blocking) -->
+    <script defer src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script defer src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Google Fonts: Playfair Display + Inter + JetBrains Mono -->
+    <!-- Asynchronous Google Fonts (Non-Blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
     <style>
       /* ══════════════════════════════════════════════════════════════ */
@@ -145,8 +151,7 @@
         background: linear-gradient(135deg, #ffffff 0%, #fff7ed 25%, #fdba74 65%, #67e8f9 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-size: 200% auto;
-        animation: textShimmer 8s linear infinite;
+        will-change: transform;
       }
 
       .text-ghost-hover {
@@ -340,15 +345,16 @@
         );
         animation: radar-spin 4s linear infinite;
         will-change: transform;
+        transform: translateZ(0);
         pointer-events: none;
       }
 
       @keyframes radar-spin {
         from {
-          transform: rotate(0deg);
+          transform: rotate(0deg) translateZ(0);
         }
         to {
-          transform: rotate(360deg);
+          transform: rotate(360deg) translateZ(0);
         }
       }
     </style>
@@ -368,10 +374,14 @@
     <!-- ══════════════════════════════════════════════════════════════ -->
     <div id="bg-hero-earth" class="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none" aria-hidden="true">
       <img
-        src="assets/images/bg-earth.png"
+        src="assets/images/bg-earth.webp"
         alt="Facedaterra"
+        width="1672"
+        height="941"
+        fetchpriority="high"
+        decoding="sync"
         class="w-full h-full object-cover object-center opacity-85 brightness-105 contrast-105 will-change-transform pointer-events-none"
-        onerror="this.src='assets/images/bg-earth.png'"
+        onerror="this.src='assets/images/bg-earth.webp'"
       />
       <div class="absolute inset-0 bg-[#030714]/20 pointer-events-none"></div>
     </div>
@@ -423,11 +433,15 @@
             aria-label="LEVELUP Agency Início"
           >
             <img
-              src="assets/images/logo-3d-transparent.png"
+              src="assets/images/logo-3d-transparent.webp"
               alt="LevelUp Agency"
+              width="125"
+              height="83"
+              fetchpriority="high"
+              decoding="sync"
               class="w-[100px] sm:w-[125px] h-auto object-contain transition-all duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_0_15px_rgba(0,160,255,0.45)]"
               style="filter: drop-shadow(0 2px 10px rgba(0, 160, 255, 0.28));"
-              onerror="this.src='assets/images/logo-3d-transparent.png'"
+              onerror="this.src='assets/images/logo-3d-transparent.webp'"
             />
           </a>
         </div>
@@ -560,10 +574,14 @@
             <!-- Protagonist 3D Logo Element -->
             <div class="relative group cursor-pointer">
               <img
-                src="assets/images/logo-3d-transparent.png"
+                src="assets/images/logo-3d-transparent.webp"
                 alt="LevelUp 3D Logo"
+                width="160"
+                height="107"
+                fetchpriority="high"
+                decoding="sync"
                 class="w-24 sm:w-36 md:w-40 h-auto object-contain filter drop-shadow-[0_0_35px_rgba(0,160,255,0.45)] drop-shadow-[0_0_70px_rgba(52,211,153,0.3)] transition-transform duration-700 group-hover:scale-105"
-                onerror="this.src='assets/images/logo-3d-transparent.png'"
+                onerror="this.src='assets/images/logo-3d-transparent.webp'"
               />
             </div>
           </div>
@@ -645,13 +663,13 @@
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
           <video
             id="video-dobra-2"
-            autoplay
             loop
             muted
             playsinline
-            preload="metadata"
+            preload="none"
             class="w-full h-full object-cover object-center opacity-45 md:opacity-55 filter brightness-105 contrast-110"
           >
+            <source src="assets/videos/bg-dobra2.webm" type="video/webm" />
             <source src="assets/videos/bg-dobra2.mp4" type="video/mp4" />
           </video>
           <!-- Cinematic Gradient Overlays to blend with surrounding sections & enhance card contrast -->
@@ -836,13 +854,13 @@
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
           <video
             id="video-dobra-3"
-            autoplay
             loop
             muted
             playsinline
-            preload="metadata"
+            preload="none"
             class="w-full h-full object-cover object-center opacity-45 md:opacity-55 filter brightness-105 contrast-110"
           >
+            <source src="assets/videos/bg-dobra3.webm" type="video/webm" />
             <source src="assets/videos/bg-dobra3.mp4" type="video/mp4" />
           </video>
           <!-- Cinematic Gradient Overlays to blend with surrounding sections & enhance card contrast -->
@@ -1255,13 +1273,15 @@
                   <!-- Full-Bleed Video Media (projeto2.mp4 - 100% Uncropped) -->
                   <video
                     id="video-project-2"
-                    src="assets/videos/showcase-projeto2.mp4"
                     loop
                     muted
                     playsinline
                     preload="none"
                     class="w-full h-full object-cover object-center filter brightness-105 contrast-105 group-hover:scale-[1.02] transition-transform duration-700 block"
-                  ></video>
+                  >
+                    <source src="assets/videos/showcase-projeto2.webm" type="video/webm" />
+                    <source src="assets/videos/showcase-projeto2.mp4" type="video/mp4" />
+                  </video>
 
                   <!-- Realistic Diagonal Glass Reflection & Specular Light Sweep -->
                   <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.04] to-white/[0.16] pointer-events-none mix-blend-overlay"></div>
@@ -1279,13 +1299,15 @@
                   <!-- Full-Bleed Video Media (projeto1.mp4 - 100% Uncropped) -->
                   <video
                     id="video-project-1"
-                    src="assets/videos/showcase-projeto1.mp4"
                     loop
                     muted
                     playsinline
                     preload="none"
                     class="w-full h-full object-cover object-center filter brightness-105 contrast-105 group-hover:scale-[1.02] transition-transform duration-700 block"
-                  ></video>
+                  >
+                    <source src="assets/videos/showcase-projeto1.webm" type="video/webm" />
+                    <source src="assets/videos/showcase-projeto1.mp4" type="video/mp4" />
+                  </video>
 
                   <!-- Realistic Diagonal Glass Reflection & Specular Light Sweep -->
                   <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.05] to-white/[0.20] pointer-events-none mix-blend-overlay"></div>
@@ -1309,9 +1331,12 @@
         <!-- Background Image for Section 05 (dobra5 .png) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
           <img
-            src="assets/images/bg-dobra5.png"
+            src="assets/images/bg-dobra5.webp"
             alt=""
+            width="1672"
+            height="941"
             loading="lazy"
+            decoding="async"
             class="w-full h-full object-cover object-center opacity-40 md:opacity-50 filter brightness-105 contrast-110 will-change-transform"
           />
           <!-- Cinematic Gradient Overlays to blend with surrounding sections & enhance card contrast -->
@@ -1975,9 +2000,12 @@
                   
                   <!-- Real Website Screenshot Image Preview -->
                   <img
-                    src="assets/images/preview-fernando-corretor.jpg"
+                    src="assets/images/preview-fernando-corretor.webp"
                     alt="Fernando Corretor - Website de Alto Padrão"
+                    width="1376"
+                    height="768"
                     loading="lazy"
+                    decoding="async"
                     class="w-full h-full object-cover object-top filter brightness-95 contrast-105 group-hover:brightness-105 group-hover:scale-105 transition-all duration-700 block"
                   />
 
@@ -2083,9 +2111,12 @@
                   
                   <!-- Real Dark GPS Cartography Background Image -->
                   <img
-                    src="assets/images/preview-google-maps.jpg"
+                    src="assets/images/preview-google-maps.webp"
                     alt="Google Maps Local Intelligence UI"
+                    width="1376"
+                    height="768"
                     loading="lazy"
+                    decoding="async"
                     class="absolute inset-0 w-full h-full object-cover object-center opacity-30 filter brightness-90 contrast-125 pointer-events-none"
                   />
 
@@ -2247,9 +2278,12 @@
         <!-- Background Image for Section 08 (dobra8 .jpeg) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
           <img
-            src="assets/images/bg-dobra8.jpg"
+            src="assets/images/bg-dobra8.webp"
             alt=""
+            width="1024"
+            height="587"
             loading="lazy"
+            decoding="async"
             class="w-full h-full object-cover object-center opacity-40 md:opacity-50 filter brightness-105 contrast-110 will-change-transform"
           />
           <!-- Cinematic Gradient Overlays to blend seamlessly with surrounding sections & enhance contrast -->
@@ -2576,9 +2610,12 @@
         <!-- Background Image for Section 09 (dobra9.png) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
           <img
-            src="assets/images/bg-dobra9.png"
+            src="assets/images/bg-dobra9.webp"
             alt=""
+            width="1672"
+            height="941"
             loading="lazy"
+            decoding="async"
             class="w-full h-full object-cover object-center opacity-40 md:opacity-50 filter brightness-105 contrast-110 will-change-transform"
           />
           <!-- Cinematic Gradient Overlays to blend seamlessly with surrounding sections & enhance contrast -->

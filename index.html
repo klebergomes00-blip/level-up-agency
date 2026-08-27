@@ -378,16 +378,7 @@
     <!-- FIXED PLANETARY BACKGROUND BACKDROP (facedaterra.png)          -->
     <!-- ══════════════════════════════════════════════════════════════ -->
     <div id="bg-hero-earth" class="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none" aria-hidden="true">
-      <img
-        src="assets/images/bg-earth.webp"
-        alt="Facedaterra"
-        width="1672"
-        height="941"
-        fetchpriority="high"
-        decoding="sync"
-        class="w-full h-full object-cover object-center opacity-85 brightness-105 contrast-105 will-change-transform pointer-events-none"
-        onerror="this.src='assets/images/bg-earth.webp'"
-      />
+      <img src="assets/images/bg-earth.webp" alt="Facedaterra" width="960" height="540" fetchpriority="high" decoding="sync" class="w-full h-full object-cover object-center opacity-85 brightness-105 contrast-105 will-change-transform pointer-events-none" onerror="this.src='assets/images/bg-earth.webp'" />
       <div class="absolute inset-0 bg-[#030714]/20 pointer-events-none"></div>
     </div>
 
@@ -3723,11 +3714,22 @@
         }
       }
 
-      // Execute after First Contentful Paint during browser idle time (Zero Forced Reflow on First Paint)
+      let animationsReady = false;
+      function triggerAnimationsOnce() {
+        if (animationsReady) return;
+        animationsReady = true;
+        initDeferredAnimations();
+      }
+
+      // Initialize on user intent (scroll / touch / cursor) or during post-paint idle time
+      window.addEventListener('scroll', triggerAnimationsOnce, { passive: true, once: true });
+      window.addEventListener('touchstart', triggerAnimationsOnce, { passive: true, once: true });
+      window.addEventListener('mousemove', triggerAnimationsOnce, { passive: true, once: true });
+
       if ('requestIdleCallback' in window) {
-        requestIdleCallback(initDeferredAnimations, { timeout: 1000 });
+        requestIdleCallback(triggerAnimationsOnce, { timeout: 2500 });
       } else {
-        window.addEventListener('load', () => setTimeout(initDeferredAnimations, 60));
+        setTimeout(triggerAnimationsOnce, 2000);
       }
 
       /* ══════════════════════════════════════════════════════════════ */

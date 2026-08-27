@@ -525,6 +525,7 @@
       <section id="hero" class="relative min-h-[100svh] flex flex-col items-center justify-center pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 overflow-hidden">
         
         <!-- Subtle Atmospheric Hero Ambient Backdrop (Enhances Contrast Without Obstructing Earth) -->
+        <canvas id="hero-particles-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-[1]"></canvas>
         <div class="absolute inset-0 pointer-events-none z-[1] overflow-hidden select-none" aria-hidden="true">
           <!-- Central Atmospheric Vignette & Soft Indigo/Cyan Tint -->
           <div class="absolute inset-0 bg-[radial-gradient(ellipse_75%_55%_at_50%_38%,rgba(12,25,60,0.38)_0%,rgba(5,11,28,0.14)_55%,transparent_100%)]"></div>
@@ -3013,103 +3014,197 @@
     <!-- ══════════════════════════════════════════════════════════════ -->
     <!-- JAVASCRIPT: HIGH-PERFORMANCE ANIMATION & RENDERING ENGINE       -->
     <!-- ══════════════════════════════════════════════════════════════ -->
-    <script>
-      /* ══════════ 1. CONFIGURATION OBJECT ══════════ */
-      const CONFIG = {
-        agencyName: "LEVELUP",
-        tagline: "Especialista em Criação de Sites, Landing Pages e Google Business Profile",
-        location: "Brasil, Reino Unido, Estados Unidos",
-        whatsappUrl: "https://wa.me/5561996229988",
-        instagramUrl: "https://instagram.com/levelupagencybr",
-        contactUrl: "https://wa.me/5561996229988"
-      };
-
+        <script>
+      /* ══════════ 1. CONFIGURATION & STATE OBJECT ══════════ */
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let isHeroVisible = true;
+
+      /* ══════════ 2. ATMOSPHERIC 2D CANVAS PARTICLE ENGINE (HERO) ══════════ */
+      function initHeroParticles() {
+        if (prefersReducedMotion) return;
+        const canvas = document.getElementById('hero-particles-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d', { alpha: true });
+        if (!ctx) return;
+
+        let width = 0, height = 0;
+        let particles = [];
+        let isRunning = false;
+        let rafId = null;
+
+        const isMobile = window.innerWidth < 768;
+        const count = isMobile ? 18 : 42;
+        const colors = ['rgba(56, 189, 248, ', 'rgba(251, 191, 36, ', 'rgba(103, 232, 249, ', 'rgba(255, 255, 255, '];
+
+        function resize() {
+          const parent = canvas.parentElement || document.getElementById('hero');
+          width = canvas.width = parent ? parent.offsetWidth : window.innerWidth;
+          height = canvas.height = parent ? parent.offsetHeight : window.innerHeight;
+        }
+
+        class Particle {
+          constructor() {
+            this.reset(true);
+          }
+          reset(init = false) {
+            this.x = Math.random() * width;
+            this.y = init ? Math.random() * height : height + 8;
+            this.size = Math.random() * (isMobile ? 1.3 : 1.7) + 0.6;
+            this.vx = (Math.random() - 0.5) * 0.22;
+            this.vy = -(Math.random() * 0.32 + 0.12);
+            this.baseAlpha = Math.random() * 0.55 + 0.25;
+            this.alpha = this.baseAlpha;
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.twinkleSpeed = Math.random() * 0.02 + 0.008;
+            this.twinklePhase = Math.random() * Math.PI * 2;
+          }
+          update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.twinklePhase += this.twinkleSpeed;
+            this.alpha = this.baseAlpha * (0.6 + 0.4 * Math.sin(this.twinklePhase));
+            if (this.y < -10 || this.x < -10 || this.x > width + 10) {
+              this.reset();
+            }
+          }
+          draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = this.color + this.alpha.toFixed(2) + ')';
+            ctx.fill();
+          }
+        }
+
+        resize();
+        particles = Array.from({ length: count }, () => new Particle());
+
+        function loop() {
+          if (!isRunning) return;
+          ctx.clearRect(0, 0, width, height);
+          for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+          }
+          rafId = requestAnimationFrame(loop);
+        }
+
+        function start() {
+          if (!isRunning) {
+            isRunning = true;
+            rafId = requestAnimationFrame(loop);
+          }
+        }
+
+        function stop() {
+          isRunning = false;
+          if (rafId) cancelAnimationFrame(rafId);
+        }
+
+        let resizeTimer = null;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(resize, 200);
+        }, { passive: true });
+
+        // Auto-pause loop when Hero is off-screen or tab is in background
+        if ('IntersectionObserver' in window) {
+          const heroEl = document.getElementById('hero');
+          if (heroEl) {
+            const heroObserver = new IntersectionObserver((entries) => {
+              entries.forEach((e) => {
+                isHeroVisible = e.isIntersecting;
+                if (e.isIntersecting && !document.hidden) start();
+                else stop();
+              });
+            }, { rootMargin: '100px 0px', threshold: 0.02 });
+            heroObserver.observe(heroEl);
+          }
+        } else {
+          start();
+        }
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) stop();
+          else if (isHeroVisible) start();
+        }, { passive: true });
+      }
 
       /* ══════════ 3. MOBILE MENU TOGGLE ══════════ */
-      const mobileToggle = document.getElementById('mobile-toggle');
-      const mobileDrawer = document.getElementById('mobile-drawer');
-      if (mobileToggle && mobileDrawer) {
-        mobileToggle.addEventListener('click', () => {
-          mobileDrawer.classList.toggle('hidden');
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      const mobileNav = document.getElementById('mobile-nav');
+      if (menuBtn && mobileNav) {
+        menuBtn.addEventListener('click', () => {
+          const isOpen = mobileNav.classList.toggle('hidden');
+          menuBtn.setAttribute('aria-expanded', !isOpen);
         });
       }
 
       /* ══════════ 4. UNIFIED MOUSE & CURSOR TRACKER (GPU-ACCELERATED) ══════════ */
-      let mouseX = window.innerWidth / 2;
-      let mouseY = window.innerHeight / 2;
-      let isHeroVisible = true;
-
-      const cursor = document.getElementById('custom-cursor');
-      const cursorDot = document.getElementById('custom-cursor-dot');
-      const isDesktop = window.innerWidth >= 1024 && !prefersReducedMotion;
-
-      if (cursor && cursorDot && isDesktop) {
-        let curX = mouseX;
-        let curY = mouseY;
-        let isCursorActive = false;
-
-        window.addEventListener('mousemove', (e) => {
-          mouseX = e.clientX;
-          mouseY = e.clientY;
-          if (!isCursorActive) {
-            isCursorActive = true;
-            curX = mouseX;
-            curY = mouseY;
-          }
-          cursorDot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-        }, { passive: true });
-
-        function renderCursor() {
-          if (isCursorActive) {
-            curX += (mouseX - curX) * 0.22;
-            curY += (mouseY - curY) * 0.22;
-            cursor.style.transform = `translate3d(${curX}px, ${curY}px, 0) translate(-50%, -50%)`;
-          }
-          requestAnimationFrame(renderCursor);
+      (function initCursor() {
+        const dot = document.getElementById('cursor-dot');
+        const glow = document.getElementById('cursor-glow');
+        if (!dot && !glow) return;
+        if (prefersReducedMotion || window.matchMedia('(pointer: coarse)').matches) {
+          if (dot) dot.style.display = 'none';
+          if (glow) glow.style.display = 'none';
+          return;
         }
-        renderCursor();
 
-        const hoverTargets = document.querySelectorAll('a, button, input, .flash-card');
-        hoverTargets.forEach((target) => {
-          target.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'), { passive: true });
-          target.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'), { passive: true });
-        });
-      } else {
+        let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+        let gx = mx, gy = my;
+        let isMoving = false;
+
         window.addEventListener('mousemove', (e) => {
-          mouseX = e.clientX;
-          mouseY = e.clientY;
+          mx = e.clientX;
+          my = e.clientY;
+          if (!isMoving) {
+            isMoving = true;
+            if (dot) { dot.style.opacity = '1'; }
+            if (glow) { glow.style.opacity = '0.7'; }
+          }
+          if (dot) {
+            dot.style.transform = 'translate3d(' + mx + 'px, ' + my + 'px, 0) translate(-50%, -50%)';
+          }
         }, { passive: true });
-      }
+
+        function updateGlow() {
+          gx += (mx - gx) * 0.15;
+          gy += (my - gy) * 0.15;
+          if (glow) {
+            glow.style.transform = 'translate3d(' + gx + 'px, ' + gy + 'px, 0) translate(-50%, -50%)';
+          }
+          requestAnimationFrame(updateGlow);
+        }
+        requestAnimationFrame(updateGlow);
+      })();
 
       /* ══════════ 5. REAL-TIME CONIC FLASHLIGHT GLOW ENGINE (THROTTLED) ══════════ */
       (function initConicFlashlight() {
-        if (prefersReducedMotion) return;
-        const cards = document.querySelectorAll('.flash-card');
+        if (prefersReducedMotion || window.matchMedia('(pointer: coarse)').matches) return;
+        const flashCards = document.querySelectorAll('.flash-card');
+        if (!flashCards.length) return;
 
-        cards.forEach((card) => {
+        flashCards.forEach((card) => {
           let isHovered = false;
-          let rafId = null;
-          let latestE = null;
           let cachedRect = null;
+          let rafId = null;
 
           card.addEventListener('pointerenter', () => {
             isHovered = true;
-            // Cache geometry ONCE on entry to prevent synchronous layout thrashing (forced reflow)
             cachedRect = card.getBoundingClientRect();
           }, { passive: true });
 
           card.addEventListener('pointermove', (e) => {
-            latestE = e;
-            if (!cachedRect) {
-              cachedRect = card.getBoundingClientRect();
-            }
+            if (!isHovered) return;
             if (!rafId) {
               rafId = requestAnimationFrame(() => {
-                if (isHovered && latestE && cachedRect) {
-                  const dx = latestE.clientX - (cachedRect.left + cachedRect.width / 2);
-                  const dy = latestE.clientY - (cachedRect.top + cachedRect.height / 2);
-                  const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+                if (cachedRect && isHovered) {
+                  const cx = cachedRect.left + cachedRect.width / 2;
+                  const cy = cachedRect.top + cachedRect.height / 2;
+                  const dx = e.clientX - cx;
+                  const dy = e.clientY - cy;
+                  let angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+                  if (angle < 0) angle += 360;
                   const dist = Math.hypot(dx, dy);
                   const edge = Math.hypot(cachedRect.width / 2, cachedRect.height / 2);
                   const proximity = Math.max(0, 1 - Math.abs(dist - edge) / 240);
@@ -3129,23 +3224,27 @@
         });
       })();
 
-      /* ══════════ 6. DEFERRED ANIMATIONS & SCROLLTRIGGER ENGINE (ZERO REFLOW) ══════════ */
-      function initDeferredAnimations() {
+      /* ══════════ 6. MODULAR SECTION BUILDERS (PROGRESSIVE LAZY SCROLLTRIGGER) ══════════ */
+
+      // ── HERO INITIALIZATION (IMMEDIATE) ──
+      function initHeroAnimations() {
         if (window.lucide) {
           try { lucide.createIcons({ attrs: { 'stroke-width': 1.5 } }); } catch (e) {}
         }
-        if (window.gsap && window.ScrollTrigger) {
-          gsap.registerPlugin(ScrollTrigger);
-          ScrollTrigger.config({
-            limitCallbacks: true,
-            syncInterval: 100
-          });
-          gsap.defaults({
-            force3D: true,
-            ease: 'power3.out'
-          });
+        if (!window.gsap || !window.ScrollTrigger) return;
+        gsap.registerPlugin(ScrollTrigger);
+
+        ScrollTrigger.config({
+          limitCallbacks: true,
+          syncInterval: 100
+        });
+
+        gsap.defaults({
+          force3D: true,
+          ease: 'power3.out'
+        });
+
         if (!prefersReducedMotion) {
-          // 1. Instant Zero-Delay LCP Hero (Rendered immediately on First Paint, no opacity: 0 delay)
           // Magnetic CTA Buttons
           const magBtns = document.querySelectorAll('.btn-magnetic, #hero-magnetic-btn');
           magBtns.forEach((mag) => {
@@ -3171,7 +3270,7 @@
             }, { passive: true });
           });
 
-          /* ══════════ 7. BACKGROUND EARTH MOUSE PARALLAX (HERO ONLY) ══════════ */
+          // Earth Background Mouse Parallax
           const bgEarthImg = document.querySelector('#bg-hero-earth img');
           const heroLogoCenter = document.getElementById('hero-logo-center');
 
@@ -3190,7 +3289,7 @@
             }, { passive: true });
           }
 
-          /* ══════════ 8. BACKGROUND PARALLAX & SCROLL DEPTH ══════════ */
+          // Background Earth Parallax & Scroll Depth
           gsap.to('#bg-hero-earth img', {
             scrollTrigger: {
               trigger: 'body',
@@ -3215,8 +3314,15 @@
               }
             }
           });
+        }
 
-          /* ══════════ SECTION 02 (COMO FUNCIONA) SCROLLTRIGGER REVEAL ══════════ */
+        initHeroParticles();
+      }
+
+      // ── SECTION 02 BUILDER ──
+      function initSection2() {
+        if (prefersReducedMotion || !window.gsap) return;
+        /* ══════════ SECTION 02 (COMO FUNCIONA) SCROLLTRIGGER REVEAL ══════════ */
           const s2Tl = gsap.timeline({
             scrollTrigger: {
               trigger: '#como-funciona',
@@ -3242,8 +3348,12 @@
             { x: 0, opacity: 1, duration: 0.85, stagger: 0.12 },
             '-=0.7'
           );
+      }
 
-          /* ══════════ SECTION 03 (PERFIL GOOGLE) SCROLLTRIGGER REVEAL ══════════ */
+      // ── SECTION 03 BUILDER ──
+      function initSection3() {
+        if (prefersReducedMotion || !window.gsap) return;
+        /* ══════════ SECTION 03 (PERFIL GOOGLE) SCROLLTRIGGER REVEAL ══════════ */
           const s3Tl = gsap.timeline({
             scrollTrigger: {
               trigger: '#google',
@@ -3340,8 +3450,12 @@
               if (setCardX) { setCardX(0); setCardY(0); }
             }, { passive: true });
           }
+      }
 
-          /* ══════════ SECTION 04 (CRIAÇÃO DE SITES) SCROLLTRIGGER REVEAL ══════════ */
+      // ── SECTION 04 BUILDER ──
+      function initSection4() {
+        if (prefersReducedMotion || !window.gsap) return;
+        /* ══════════ SECTION 04 (CRIAÇÃO DE SITES) SCROLLTRIGGER REVEAL ══════════ */
           const s4Tl = gsap.timeline({
             scrollTrigger: {
               trigger: '#sites',
@@ -3398,8 +3512,12 @@
             rotateX: 6,
             ease: 'none'
           });
+      }
 
-          /* ══════════ SECTION 05 (O CUSTO DA INVISIBILIDADE) SCROLLTRIGGER REVEAL ══════════ */
+      // ── SECTION 05 BUILDER ──
+      function initSection5() {
+        if (prefersReducedMotion || !window.gsap) return;
+        /* ══════════ SECTION 05 (O CUSTO DA INVISIBILIDADE) SCROLLTRIGGER REVEAL ══════════ */
           const s5Tl = gsap.timeline({
             scrollTrigger: {
               trigger: '#problema',
@@ -3425,8 +3543,12 @@
             { y: 0, opacity: 1, duration: 0.85, stagger: 0.12, ease: 'power2.out' },
             '-=0.6'
           );
+      }
 
-          /* ══════════ SECTION 06 (GROWTH PATH METHOD) GSAP SCROLLTRIGGER ══════════ */
+      // ── SECTION 06 BUILDER ──
+      function initSection6() {
+        if (prefersReducedMotion || !window.gsap) return;
+        /* ══════════ SECTION 06 (GROWTH PATH METHOD) GSAP SCROLLTRIGGER ══════════ */
           const s6Tl = gsap.timeline({
             scrollTrigger: {
               trigger: '#metodo',
@@ -3513,8 +3635,12 @@
               ease: 'none'
             });
           }
+      }
 
-          /* ══════════ SECTION 07 (SELECTED WORK / DIGITAL EXPERIENCES) GSAP ══════════ */
+      // ── SECTION 07 BUILDER ──
+      function initSection7() {
+        if (prefersReducedMotion || !window.gsap) return;
+        /* ══════════ SECTION 07 (SELECTED WORK / DIGITAL EXPERIENCES) GSAP ══════════ */
           const s7Tl = gsap.timeline({
             scrollTrigger: {
               trigger: '#trabalhos',
@@ -3568,8 +3694,12 @@
             y: -30,
             ease: 'none'
           });
+      }
 
-          /* ══════════ SECTION 08 (GOOGLE BUSINESS PROFILE / RADAR) GSAP ══════════ */
+      // ── SECTION 08 BUILDER ──
+      function initSection8() {
+        if (prefersReducedMotion || !window.gsap) return;
+        /* ══════════ SECTION 08 (GOOGLE BUSINESS PROFILE / RADAR) GSAP ══════════ */
           const s8Tl = gsap.timeline({
             scrollTrigger: {
               trigger: '#google-presenca',
@@ -3640,8 +3770,12 @@
           bindRadarHover(ind01, node01, line01);
           bindRadarHover(ind02, node02, line02);
           bindRadarHover(ind03, node03, line03);
+      }
 
-          /* ══════════ SECTION 09 (FROM DISCOVERY TO ACTION) GSAP ══════════ */
+      // ── SECTION 09 BUILDER ──
+      function initSection9() {
+        if (prefersReducedMotion || !window.gsap) return;
+        /* ══════════ SECTION 09 (FROM DISCOVERY TO ACTION) GSAP ══════════ */
           const s9Tl = gsap.timeline({
             scrollTrigger: {
               trigger: '#jornada',
@@ -3689,8 +3823,12 @@
               }
             });
           });
+      }
 
-          /* ══════════ SECTION 10 (LET'S TALK & FOOTER) GSAP ══════════ */
+      // ── SECTION 10 BUILDER ──
+      function initSection10() {
+        if (prefersReducedMotion || !window.gsap) return;
+        /* ══════════ SECTION 10 (LET'S TALK & FOOTER) GSAP ══════════ */
           const s10Tl = gsap.timeline({
             scrollTrigger: {
               trigger: '#contato',
@@ -3712,31 +3850,58 @@
           );
         }
       }
-          ScrollTrigger.refresh();
+      }
+
+      /* ══════════ 7. PROGRESSIVE INTERSECTION OBSERVER ENGINE ══════════ */
+      const sectionBuilders = {
+        'como-funciona': initSection2,
+        'google': initSection3,
+        'sites': initSection4,
+        'problema': initSection5,
+        'metodo': initSection6,
+        'trabalhos': initSection7,
+        'google-presenca': initSection8,
+        'jornada': initSection9,
+        'contato': initSection10
+      };
+
+      const initializedSections = new Set();
+
+      function activateSection(id) {
+        if (initializedSections.has(id)) return;
+        initializedSections.add(id);
+        const builder = sectionBuilders[id];
+        if (typeof builder === 'function') {
+          builder();
         }
       }
 
-            // Initialize animations on DOM ready so all ScrollTrigger reveals are 100% active and reliable
-      function startEngine() {
-        if (typeof initDeferredAnimations === 'function') {
-          initDeferredAnimations();
+      function setupLazySectionEngine() {
+        initHeroAnimations();
+
+        if ('IntersectionObserver' in window) {
+          const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const id = entry.target.id;
+                activateSection(id);
+                sectionObserver.unobserve(entry.target);
+              }
+            });
+          }, { rootMargin: '350px 0px 350px 0px', threshold: 0.01 });
+
+          Object.keys(sectionBuilders).forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) sectionObserver.observe(el);
+          });
+        } else {
+          // Fallback if IntersectionObserver is unavailable
+          Object.keys(sectionBuilders).forEach(activateSection);
         }
       }
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-          requestAnimationFrame(startEngine);
-        });
-      } else {
-        requestAnimationFrame(startEngine);
-      }
-      }
-
-      /* ══════════════════════════════════════════════════════════════ */
-      /* 9. LAZY LOAD & VIEWPORT INTERSECTION OBSERVER OBSERVERS        */
-      /* ══════════════════════════════════════════════════════════════ */
+      /* ══════════ 8. LAZY LOAD & VIEWPORT VIDEO PLAY/PAUSE OBSERVERS ══════════ */
       if ('IntersectionObserver' in window) {
-        // A. Video Play/Pause Observer (Pause decoding when off-screen)
         const lazyVideos = [
           document.getElementById('video-dobra-2'),
           document.getElementById('video-dobra-3'),
@@ -3753,42 +3918,35 @@
               vid.pause();
             }
           });
-        }, { rootMargin: '100px 0px', threshold: 0.05 });
+        }, { rootMargin: '200px 0px', threshold: 0.01 });
 
         lazyVideos.forEach((v) => videoObserver.observe(v));
 
-        // B. Hero Visibility Observer (WebGL Particle Loop Throttling)
-        const heroSection = document.getElementById('hero');
-        if (heroSection) {
-          const heroObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-              isHeroVisible = entry.isIntersecting;
-            });
-          }, { rootMargin: '100px 0px' });
-          heroObserver.observe(heroSection);
-        }
-
-        // C. Radar Sweep CSS Animation Observer
+        // Radar Sweep CSS Animation Observer
         const radarSweep = document.querySelector('.radar-sweep');
-        const s8Section = document.getElementById('google-presenca');
-        if (radarSweep && s8Section) {
+        const sectionGooglePresenca = document.getElementById('google-presenca');
+        if (radarSweep && sectionGooglePresenca) {
           const radarObserver = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
-              if (entry.isIntersecting && !prefersReducedMotion) {
+              if (entry.isIntersecting) {
                 radarSweep.style.animationPlayState = 'running';
               } else {
                 radarSweep.style.animationPlayState = 'paused';
               }
             });
           }, { rootMargin: '100px 0px' });
-          radarObserver.observe(s8Section);
+          radarObserver.observe(sectionGooglePresenca);
         }
       }
 
-      /* ══════════════════════════════════════════════════════════════ */
-      /* 10. REAL-TIME WEBGL SHADER: MULTI-SPEED PARTICLES (DEPTH)      */
-      /* ══════════════════════════════════════════════════════════════ */
-      
+      // Initialize engine on DOMContentLoaded via requestAnimationFrame
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          requestAnimationFrame(setupLazySectionEngine);
+        });
+      } else {
+        requestAnimationFrame(setupLazySectionEngine);
+      }
     </script>
   </body>
 </html>

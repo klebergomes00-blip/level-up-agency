@@ -656,14 +656,13 @@
       >
         <!-- Background Video for Section 02 (seunda dobra.mp4) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
-          <video
-            id="video-dobra-2"
+          <video id="video-dobra-2"
             loop
             muted
             playsinline
             preload="none"
             class="w-full h-full object-cover object-center opacity-45 md:opacity-55 filter brightness-105 contrast-110"
-          >
+           poster="assets/images/poster-dobra2.webp">
             <source src="assets/videos/bg-dobra2.webm" type="video/webm" />
             <source src="assets/videos/bg-dobra2.mp4" type="video/mp4" />
           </video>
@@ -847,14 +846,13 @@
       >
         <!-- Background Video for Section 03 (dobra3.mp4) -->
         <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" aria-hidden="true">
-          <video
-            id="video-dobra-3"
+          <video id="video-dobra-3"
             loop
             muted
             playsinline
             preload="none"
             class="w-full h-full object-cover object-center opacity-45 md:opacity-55 filter brightness-105 contrast-110"
-          >
+           poster="assets/images/poster-dobra3.webp">
             <source src="assets/videos/bg-dobra3.webm" type="video/webm" />
             <source src="assets/videos/bg-dobra3.mp4" type="video/mp4" />
           </video>
@@ -1266,14 +1264,13 @@
                 <div class="relative w-full h-full rounded-[18px] sm:rounded-[24px] overflow-hidden bg-black flex items-center justify-center">
                   
                   <!-- Full-Bleed Video Media (projeto2.mp4 - 100% Uncropped) -->
-                  <video
-                    id="video-project-2"
+                  <video id="video-project-2"
                     loop
                     muted
                     playsinline
                     preload="none"
                     class="w-full h-full object-cover object-center filter brightness-105 contrast-105 group-hover:scale-[1.02] transition-transform duration-700 block"
-                  >
+                   poster="assets/images/poster-projeto2.webp">
                     <source src="assets/videos/showcase-projeto2.webm" type="video/webm" />
                     <source src="assets/videos/showcase-projeto2.mp4" type="video/mp4" />
                   </video>
@@ -1292,14 +1289,13 @@
                 <div class="relative w-full h-full rounded-[17.5px] sm:rounded-[23.5px] overflow-hidden bg-black flex items-center justify-center">
                   
                   <!-- Full-Bleed Video Media (projeto1.mp4 - 100% Uncropped) -->
-                  <video
-                    id="video-project-1"
+                  <video id="video-project-1"
                     loop
                     muted
                     playsinline
                     preload="none"
                     class="w-full h-full object-cover object-center filter brightness-105 contrast-105 group-hover:scale-[1.02] transition-transform duration-700 block"
-                  >
+                   poster="assets/images/poster-projeto1.webp">
                     <source src="assets/videos/showcase-projeto1.webm" type="video/webm" />
                     <source src="assets/videos/showcase-projeto1.mp4" type="video/mp4" />
                   </video>
@@ -3105,22 +3101,27 @@
           let isHovered = false;
           let rafId = null;
           let latestE = null;
+          let cachedRect = null;
 
           card.addEventListener('pointerenter', () => {
             isHovered = true;
+            // Cache geometry ONCE on entry to prevent synchronous layout thrashing (forced reflow)
+            cachedRect = card.getBoundingClientRect();
           }, { passive: true });
 
           card.addEventListener('pointermove', (e) => {
             latestE = e;
+            if (!cachedRect) {
+              cachedRect = card.getBoundingClientRect();
+            }
             if (!rafId) {
               rafId = requestAnimationFrame(() => {
-                if (isHovered && latestE) {
-                  const r = card.getBoundingClientRect();
-                  const dx = latestE.clientX - (r.left + r.width / 2);
-                  const dy = latestE.clientY - (r.top + r.height / 2);
+                if (isHovered && latestE && cachedRect) {
+                  const dx = latestE.clientX - (cachedRect.left + cachedRect.width / 2);
+                  const dy = latestE.clientY - (cachedRect.top + cachedRect.height / 2);
                   const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
                   const dist = Math.hypot(dx, dy);
-                  const edge = Math.hypot(r.width / 2, r.height / 2);
+                  const edge = Math.hypot(cachedRect.width / 2, cachedRect.height / 2);
                   const proximity = Math.max(0, 1 - Math.abs(dist - edge) / 240);
                   card.style.setProperty('--cursor-angle', angle.toFixed(1) + 'deg');
                   card.style.setProperty('--proximity', proximity.toFixed(3));
@@ -3132,6 +3133,7 @@
 
           card.addEventListener('pointerleave', () => {
             isHovered = false;
+            cachedRect = null;
             card.style.setProperty('--proximity', '0');
           }, { passive: true });
         });
@@ -3159,9 +3161,14 @@
           magBtns.forEach((mag) => {
             const setX = gsap.quickTo(mag, 'x', { duration: 0.35, ease: 'power2.out' });
             const setY = gsap.quickTo(mag, 'y', { duration: 0.35, ease: 'power2.out' });
+            let rect = null;
+
+            mag.addEventListener('mouseenter', () => {
+              rect = mag.getBoundingClientRect();
+            }, { passive: true });
 
             mag.addEventListener('mousemove', (e) => {
-              const rect = mag.getBoundingClientRect();
+              if (!rect) rect = mag.getBoundingClientRect();
               const x = (e.clientX - rect.left - rect.width / 2) * 0.35;
               const y = (e.clientY - rect.top - rect.height / 2) * 0.45;
               setX(x);
@@ -3169,6 +3176,7 @@
             }, { passive: true });
 
             mag.addEventListener('mouseleave', () => {
+              rect = null;
               gsap.to(mag, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
             }, { passive: true });
           });
@@ -3319,10 +3327,15 @@
             const setCardX = profileCard ? gsap.quickTo(profileCard, 'x', { duration: 0.75, ease: 'power2.out' }) : null;
             const setCardY = profileCard ? gsap.quickTo(profileCard, 'y', { duration: 0.75, ease: 'power2.out' }) : null;
 
+            let mapRect = null;
+            mapContainer.addEventListener('mouseenter', () => {
+              mapRect = mapContainer.getBoundingClientRect();
+            }, { passive: true });
+
             mapContainer.addEventListener('mousemove', (e) => {
-              const rect = mapContainer.getBoundingClientRect();
-              const px = (e.clientX - rect.left) / rect.width - 0.5;
-              const py = (e.clientY - rect.top) / rect.height - 0.5;
+              if (!mapRect) mapRect = mapContainer.getBoundingClientRect();
+              const px = (e.clientX - mapRect.left) / mapRect.width - 0.5;
+              const py = (e.clientY - mapRect.top) / mapRect.height - 0.5;
               if (setLayerBgX) { setLayerBgX(px * 12); setLayerBgY(py * 10); }
               if (setSearchPillX) { setSearchPillX(px * 18); setSearchPillY(py * 14); }
               if (setPinX) { setPinX(px * 24); setPinY(py * 18); }
@@ -3330,6 +3343,7 @@
             }, { passive: true });
 
             mapContainer.addEventListener('mouseleave', () => {
+              mapRect = null;
               if (setLayerBgX) { setLayerBgX(0); setLayerBgY(0); }
               if (setSearchPillX) { setSearchPillX(0); setSearchPillY(0); }
               if (setPinX) { setPinX(0); setPinY(0); }
